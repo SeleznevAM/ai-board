@@ -90,41 +90,41 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| YTSC-01 | Phase TBD | Pending |
-| YTSC-02 | Phase TBD | Pending |
-| YTSC-03 | Phase TBD | Pending |
-| YTSC-04 | Phase TBD | Pending |
-| WORK-01 | Phase TBD | Pending |
-| WORK-02 | Phase TBD | Pending |
-| WORK-03 | Phase TBD | Pending |
-| COST-01 | Phase TBD | Pending |
-| COST-02 | Phase TBD | Pending |
-| COST-03 | Phase TBD | Pending |
-| COST-04 | Phase TBD | Pending |
-| BUDG-01 | Phase TBD | Pending |
-| BUDG-02 | Phase TBD | Pending |
-| BUDG-03 | Phase TBD | Pending |
-| PROF-01 | Phase TBD | Pending |
-| PROF-02 | Phase TBD | Pending |
-| PROF-03 | Phase TBD | Pending |
-| PROF-04 | Phase TBD | Pending |
-| PROF-05 | Phase TBD | Pending |
-| PROF-06 | Phase TBD | Pending |
-| REFO-01 | Phase TBD | Pending |
-| REFO-02 | Phase TBD | Pending |
-| REFO-03 | Phase TBD | Pending |
-| REFO-04 | Phase TBD | Pending |
-| UI-01 | Phase TBD | Pending |
-| UI-02 | Phase TBD | Pending |
-| UI-03 | Phase TBD | Pending |
-| UI-04 | Phase TBD | Pending |
-| AUDT-01 | Phase TBD | Pending |
-| AUDT-02 | Phase TBD | Pending |
+| YTSC-01 | Phase 1 | Pending |
+| YTSC-02 | Phase 1 | Pending |
+| YTSC-03 | Phase 1 | Pending |
+| YTSC-04 | Phase 2 | Pending |
+| WORK-01 | Phase 2 | Pending |
+| WORK-02 | Phase 2 | Pending |
+| WORK-03 | Phase 2 | Pending |
+| COST-01 | Phase 3 | Pending |
+| COST-02 | Phase 3 | Pending |
+| COST-03 | Phase 3 | Pending |
+| COST-04 | Phase 3 | Pending |
+| BUDG-01 | Phase 4 | Pending |
+| BUDG-02 | Phase 4 | Pending |
+| BUDG-03 | Phase 4 | Pending |
+| PROF-01 | Phase 3 | Pending |
+| PROF-02 | Phase 3 | Pending |
+| PROF-03 | Phase 3 | Pending |
+| PROF-04 | Phase 3 | Pending |
+| PROF-05 | Phase 3 | Pending |
+| PROF-06 | Phase 3 | Pending |
+| REFO-01 | Phase 4 | Pending |
+| REFO-02 | Phase 4 | Pending |
+| REFO-03 | Phase 4 | Pending |
+| REFO-04 | Phase 4 | Pending |
+| UI-01 | Phase 5 | Pending |
+| UI-02 | Phase 5 | Pending |
+| UI-03 | Phase 5 | Pending |
+| UI-04 | Phase 5 | Pending |
+| AUDT-01 | Phase 4 | Pending |
+| AUDT-02 | Phase 4 | Pending |
 
 **Coverage:**
 - v1 requirements: 30 total
-- Mapped to phases: 0
-- Unmapped: 30 ⚠️
+- Mapped to phases: 30
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-04-05*
