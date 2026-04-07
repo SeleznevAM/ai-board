@@ -28,7 +28,11 @@ Decimal phases appear between their surrounding integers in numeric order.
   1. Пользователь может ввести ID родительской задачи YouTrack и запустить разбор одного требования.
   2. Система определяет поддерживаемую иерархию вложенных задач и строит scope расчета без ручного уточнения структуры.
   3. Пользователь явно видит, какие задачи включены в поддерживаемый scope, а какие исключены из-за ограничений доступа или неподдерживаемых связей.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 01-01-PLAN.md - Bootstrap the minimal app/test shell and freeze the Phase 1 scope contract.
+- [ ] 01-02-PLAN.md - Implement defensive recursive scope resolution against a narrow YouTrack source boundary.
+- [ ] 01-03-PLAN.md - Wire the root issue flow and render the minimal nested scope tree.
 
 ### Phase 2: Ingestion Correctness
 **Goal**: Пользователь получает воспроизводимый снимок фактических данных YouTrack с признаком свежести и понятным статусом полноты.
@@ -82,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. YouTrack Data Contract | 0/TBD | Not started | - |
+| 1. YouTrack Data Contract | 0/3 | Not started | - |
 | 2. Ingestion Correctness | 0/TBD | Not started | - |
 | 3. Cost Engine | 0/TBD | Not started | - |
 | 4. Scenario Editing | 0/TBD | Not started | - |
