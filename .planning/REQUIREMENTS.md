@@ -92,7 +92,7 @@
 |-------------|-------|--------|
 | YTSC-01 | Phase 1 | Complete |
 | YTSC-02 | Phase 1 | Complete |
-| YTSC-03 | Phase 1 | Pending |
+| YTSC-03 | Phase 1 | Complete |
 | YTSC-04 | Phase 2 | Pending |
 | WORK-01 | Phase 2 | Pending |
 | WORK-02 | Phase 2 | Pending |

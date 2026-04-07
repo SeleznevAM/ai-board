@@ -12,7 +12,7 @@
 
 Decimal phases appear between their surrounding integers in numeric order.
 
-- [ ] **Phase 1: YouTrack Data Contract** - Пользователь вводит root issue и видит, какую поддерживаемую иерархию система реально возьмет в расчет.
+- [x] **Phase 1: YouTrack Data Contract** - Пользователь вводит root issue и видит, какую поддерживаемую иерархию система реально возьмет в расчет.
 - [ ] **Phase 2: Ingestion Correctness** - Система надежно синхронизирует задачи и worklog-данные из YouTrack и явно показывает полноту расчета.
 - [ ] **Phase 3: Cost Engine** - Импортированные трудозатраты превращаются в себестоимость и базовую рентабельность по требованию и направлениям.
 - [ ] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
@@ -32,7 +32,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md - Bootstrap the minimal app/test shell and freeze the Phase 1 scope contract.
 - [x] 01-02-PLAN.md - Implement defensive recursive scope resolution against a narrow YouTrack source boundary.
-- [ ] 01-03-PLAN.md - Wire the root issue flow and render the minimal nested scope tree.
+- [x] 01-03-PLAN.md - Wire the root issue flow and render the minimal nested scope tree.
 
 ### Phase 2: Ingestion Correctness
 **Goal**: Пользователь получает воспроизводимый снимок фактических данных YouTrack с признаком свежести и понятным статусом полноты.
@@ -86,7 +86,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. YouTrack Data Contract | 2/3 | In Progress | 2026-04-07 |
+| 1. YouTrack Data Contract | 3/3 | Complete | 2026-04-07 |
 | 2. Ingestion Correctness | 0/TBD | Not started | - |
 | 3. Cost Engine | 0/TBD | Not started | - |
 | 4. Scenario Editing | 0/TBD | Not started | - |
