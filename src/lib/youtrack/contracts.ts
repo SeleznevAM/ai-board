@@ -3,12 +3,14 @@ export type YouTrackIssueIdentifier = {
   readonly key: string;
 };
 
+export type YouTrackIssueVisibility = "complete" | "blocked";
+
 export type YouTrackIssueNode = YouTrackIssueIdentifier & {
   readonly summary: string;
   readonly parentId: string | null;
   readonly childIds: readonly string[];
   readonly childCount: number;
-  readonly childrenVisibility: "complete" | "blocked";
+  readonly childrenVisibility: YouTrackIssueVisibility;
 };
 
 export type YouTrackIssueLookupPayload = {
@@ -16,11 +18,25 @@ export type YouTrackIssueLookupPayload = {
   readonly retrievedAt: string;
 };
 
+export type YouTrackIssueApiPayload = {
+  readonly id: string;
+  readonly idReadable: string;
+  readonly summary: string;
+  readonly parent?: {
+    readonly id: string;
+  } | null;
+  readonly subtasks?: readonly {
+    readonly id: string;
+    readonly idReadable: string;
+  }[];
+};
+
 export type RootIssueLookupResult =
   | {
       readonly kind: "success";
       readonly root: YouTrackIssueNode;
       readonly includesChildren: boolean;
+      readonly visibility: "complete";
     }
   | {
       readonly kind: "root_issue_not_found";

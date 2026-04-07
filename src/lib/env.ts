@@ -1,7 +1,8 @@
-type AppEnvironment = {
+export type AppEnvironment = {
   readonly youTrackBaseUrl: string | null;
   readonly sessionMode: "current-user";
   readonly expectsAuthenticatedUser: true;
+  readonly authStrategy: "ambient-session";
 };
 
 function readOptionalEnv(name: string): string | null {
@@ -14,5 +15,10 @@ export function getAppEnvironment(): AppEnvironment {
     youTrackBaseUrl: readOptionalEnv("YOUTRACK_BASE_URL"),
     sessionMode: "current-user",
     expectsAuthenticatedUser: true,
+    authStrategy: "ambient-session",
   };
+}
+
+export function hasYouTrackBaseUrl(environment: AppEnvironment): boolean {
+  return environment.youTrackBaseUrl !== null;
 }
