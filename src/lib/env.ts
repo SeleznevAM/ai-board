@@ -19,6 +19,8 @@ export function getAppEnvironment(): AppEnvironment {
   };
 }
 
-export function hasYouTrackBaseUrl(environment: AppEnvironment): boolean {
+export function hasYouTrackBaseUrl(
+  environment: AppEnvironment,
+): environment is AppEnvironment & { readonly youTrackBaseUrl: string } {
   return environment.youTrackBaseUrl !== null;
 }
