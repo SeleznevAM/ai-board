@@ -30,7 +30,7 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. Пользователь либо видит полное дерево поддерживаемого scope, либо получает явную ошибку, если root issue или часть поддерживаемой иерархии недоступны текущему пользователю.
 **Plans**: 3 plans
 Plans:
-- [ ] 01-01-PLAN.md - Bootstrap the minimal app/test shell and freeze the Phase 1 scope contract.
+- [x] 01-01-PLAN.md - Bootstrap the minimal app/test shell and freeze the Phase 1 scope contract.
 - [ ] 01-02-PLAN.md - Implement defensive recursive scope resolution against a narrow YouTrack source boundary.
 - [ ] 01-03-PLAN.md - Wire the root issue flow and render the minimal nested scope tree.
 
