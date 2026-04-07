@@ -27,7 +27,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Success Criteria** (what must be TRUE):
   1. Пользователь может ввести ID родительской задачи YouTrack и запустить разбор одного требования.
   2. Система определяет поддерживаемую иерархию вложенных задач и строит scope расчета без ручного уточнения структуры.
-  3. Пользователь явно видит, какие задачи включены в поддерживаемый scope, а какие исключены из-за ограничений доступа или неподдерживаемых связей.
+  3. Пользователь либо видит полное дерево поддерживаемого scope, либо получает явную ошибку, если root issue или часть поддерживаемой иерархии недоступны текущему пользователю.
 **Plans**: 3 plans
 Plans:
 - [ ] 01-01-PLAN.md - Bootstrap the minimal app/test shell and freeze the Phase 1 scope contract.
