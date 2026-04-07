@@ -1,3 +1,11 @@
+"use client";
+
+import { useState } from "react";
+
+import { RootIssueForm, type RootIssueFormResult } from "../src/components/root-issue-form";
+import { ScopeState } from "../src/components/scope-state";
+import { ScopeTree } from "../src/components/scope-tree";
+
 const panelStyle = {
   borderRadius: "24px",
   border: "1px solid rgba(75, 49, 11, 0.18)",
@@ -6,6 +14,8 @@ const panelStyle = {
 } as const;
 
 export default function HomePage() {
+  const [result, setResult] = useState<RootIssueFormResult | null>(null);
+
   return (
     <main
       style={{
@@ -18,52 +28,77 @@ export default function HomePage() {
       <section
         style={{
           ...panelStyle,
-          width: "min(880px, 100%)",
+          width: "min(980px, 100%)",
           padding: "40px",
+          display: "grid",
+          gap: "28px",
         }}
       >
-        <p
-          style={{
-            margin: 0,
-            letterSpacing: "0.2em",
-            textTransform: "uppercase",
-            fontSize: "0.8rem",
-            color: "#7a5a22",
-          }}
-        >
-          Phase 1 foundation
-        </p>
-        <h1 style={{ marginBottom: "16px", fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-          YouTrack scope discovery
-        </h1>
-        <p style={{ maxWidth: "60ch", fontSize: "1.1rem", lineHeight: 1.6 }}>
-          This first phase freezes the contract for how a root issue becomes a supported
-          requirement scope. Version one follows a subtasks-only model: the root issue and
-          nested subtasks are in scope, while non-hierarchical links stay out of the tree.
-        </p>
+        <header style={{ display: "grid", gap: "14px" }}>
+          <p
+            style={{
+              margin: 0,
+              letterSpacing: "0.2em",
+              textTransform: "uppercase",
+              fontSize: "0.8rem",
+              color: "#7a5a22",
+            }}
+          >
+            Phase 1 scope discovery
+          </p>
+          <h1 style={{ margin: 0, fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
+            YouTrack scope discovery
+          </h1>
+          <p style={{ maxWidth: "62ch", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
+            Enter a root issue to verify the supported requirement scope for phase one.
+            In this phase only the subtask hierarchy is supported.
+          </p>
+        </header>
+
         <div
           style={{
+            ...panelStyle,
+            padding: "24px",
             display: "grid",
-            gap: "16px",
-            marginTop: "32px",
-            gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+            gap: "12px",
           }}
         >
-          <article style={{ ...panelStyle, padding: "20px" }}>
-            <h2 style={{ marginTop: 0 }}>Root issue input</h2>
-            <p style={{ marginBottom: 0 }}>
-              A future plan will render the issue key field here and resolve the starting
-              node in the current user context.
-            </p>
-          </article>
-          <article style={{ ...panelStyle, padding: "20px" }}>
-            <h2 style={{ marginTop: 0 }}>Scope tree</h2>
-            <p style={{ marginBottom: 0 }}>
-              Another plan will render the nested tree here with explicit states for
-              not-found, forbidden, partial-scope-blocked, and single-node success.
-            </p>
-          </article>
+          <h2 style={{ margin: 0 }}>Root issue lookup</h2>
+          <p style={{ margin: 0, lineHeight: 1.6 }}>
+            The page confirms whether the requested issue produces a complete visible tree
+            for the current user.
+          </p>
+          <RootIssueForm onResolved={setResult} />
         </div>
+
+        {result?.kind === "success" ? (
+          <div style={{ ...panelStyle, padding: "24px" }}>
+            <ScopeTree root={result.scope.root} />
+          </div>
+        ) : null}
+
+        {result?.kind === "error" ? (
+          <ScopeState
+            code={result.code}
+            issueKey={result.issueKey}
+            message={result.message}
+          />
+        ) : (
+          <div
+            style={{
+              ...panelStyle,
+              padding: "24px",
+              display: "grid",
+              gap: "10px",
+            }}
+          >
+            <h2 style={{ margin: 0 }}>Current state</h2>
+            <p style={{ margin: 0, lineHeight: 1.6 }}>
+              No scope has been requested yet. A successful lookup will render a nested tree
+              here, and blocked outcomes will replace it with an explicit phase-one state.
+            </p>
+          </div>
+        )}
       </section>
     </main>
   );
