@@ -13,6 +13,7 @@ export const DIRECTION_KEYS = [
 
 export type DirectionKey = (typeof DIRECTION_KEYS)[number];
 export type CostDirectionKey = DirectionKey | "unmapped";
+export const COST_DIRECTION_KEYS = [...DIRECTION_KEYS, "unmapped"] as const;
 
 export type AssigneeDirectoryEntry = {
   readonly assigneeKey: string;
@@ -22,6 +23,8 @@ export type AssigneeDirectoryEntry = {
 };
 
 export type CostWarningCode = "MISSING_ASSIGNEE" | "UNMAPPED_ASSIGNEE";
+
+export type DirectionBudgetMap = Record<CostDirectionKey, number>;
 
 export type AssigneeDirectoryResolution =
   | {
@@ -59,13 +62,30 @@ export type DirectionCostTotals = {
   readonly role: CostDirectionKey;
   readonly minutes: number;
   readonly hours: number;
-  readonly cost: number;
+  readonly cost: number | null;
 };
 
 export type RequirementProfitability = {
   readonly budget: number | null;
-  readonly cost: number;
+  readonly cost: number | null;
   readonly delta: number | null;
   readonly marginPercent: number | null;
   readonly neededUpsell: number | null;
+};
+
+export type DirectionProfitability = {
+  readonly role: CostDirectionKey;
+  readonly budget: number | null;
+  readonly cost: number | null;
+  readonly delta: number | null;
+  readonly marginPercent: number | null;
+};
+
+export type RequirementCostResult = {
+  readonly ledger: readonly CostLedgerRow[];
+  readonly directionTotals: readonly DirectionCostTotals[];
+  readonly totalMinutes: number;
+  readonly totalHours: number;
+  readonly totalCost: number | null;
+  readonly warnings: readonly CostWarningCode[];
 };
