@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { buildScopeTree } from "../../../src/lib/scope/buildScopeTree";
+import { buildRequirementSnapshot } from "../../../src/lib/ingestion/buildRequirementSnapshot";
 import { resolveCurrentUserYouTrackAccess } from "../../../src/lib/youtrack/auth";
 import {
   PARTIAL_SCOPE_FORBIDDEN,
@@ -45,10 +45,14 @@ export async function POST(request: Request) {
 
   try {
     const currentUserAccess = await resolveCurrentUserYouTrackAccess(request);
-    const scope = await buildScopeTree({
+    const scope = await buildRequirementSnapshot({
       rootIssueKey,
       currentUserAccess,
     });
+
+    if (scope.status === "snapshot_blocked") {
+      return NextResponse.json(scope, { status: 409 });
+    }
 
     return NextResponse.json(scope, { status: 200 });
   } catch (error) {
