@@ -25,10 +25,22 @@ export type YouTrackIssueApiPayload = {
   readonly parent?: {
     readonly id: string;
   } | null;
-  readonly subtasks?: readonly {
-    readonly id: string;
-    readonly idReadable: string;
-  }[];
+  readonly subtasks?:
+    | readonly {
+        readonly id: string;
+        readonly idReadable: string;
+      }[]
+    | {
+        readonly issues?: readonly {
+          readonly id: string;
+          readonly idReadable: string;
+        }[];
+        readonly value?: readonly {
+          readonly id: string;
+          readonly idReadable: string;
+        }[];
+      }
+    | null;
 };
 
 export type RootIssueLookupResult =

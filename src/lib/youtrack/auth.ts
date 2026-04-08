@@ -1,4 +1,8 @@
-import { getAppEnvironment, hasYouTrackBaseUrl } from "../env";
+import {
+  getAppEnvironment,
+  hasYouTrackBaseUrl,
+  hasYouTrackToken,
+} from "../env";
 
 export type CurrentUserYouTrackAccess = {
   readonly baseUrl: string;
@@ -30,7 +34,7 @@ export async function resolveCurrentUserYouTrackAccess(
   }
   const baseUrl = environment.youTrackBaseUrl;
 
-  const token = readBearerToken(request);
+  const token = readBearerToken(request) ?? (hasYouTrackToken(environment) ? environment.youTrackToken : null);
   if (token === null) {
     throw new Error("Missing current-user YouTrack bearer token.");
   }

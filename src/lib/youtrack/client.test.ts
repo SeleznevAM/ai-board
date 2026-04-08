@@ -1,0 +1,44 @@
+import { describe, expect, it } from "vitest";
+
+import { __private__ } from "./client";
+
+describe("normalizeSubtasks", () => {
+  it("returns subtasks when the API payload already contains an array", () => {
+    expect(
+      __private__.normalizeSubtasks([
+        {
+          id: "1-2",
+          idReadable: "REQ-2",
+        },
+      ]),
+    ).toEqual([
+      {
+        id: "1-2",
+        idReadable: "REQ-2",
+      },
+    ]);
+  });
+
+  it("returns subtasks when YouTrack wraps them in an issues collection", () => {
+    expect(
+      __private__.normalizeSubtasks({
+        issues: [
+          {
+            id: "1-2",
+            idReadable: "REQ-2",
+          },
+        ],
+      }),
+    ).toEqual([
+      {
+        id: "1-2",
+        idReadable: "REQ-2",
+      },
+    ]);
+  });
+
+  it("returns an empty array for unsupported or missing subtask shapes", () => {
+    expect(__private__.normalizeSubtasks(null)).toEqual([]);
+    expect(__private__.normalizeSubtasks({})).toEqual([]);
+  });
+});
