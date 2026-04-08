@@ -15,6 +15,10 @@ const panelStyle = {
 
 export default function HomePage() {
   const [result, setResult] = useState<RootIssueFormResult | null>(null);
+  const youTrackBaseUrl = process.env.NEXT_PUBLIC_YOUTRACK_BASE_URL ?? null;
+  const successfulScope = result?.kind === "success" ? result.scope : null;
+  const blockedScope = result?.kind === "blocked" ? result.scope : null;
+  const lastSyncedAt = successfulScope?.syncedAt ?? blockedScope?.syncedAt;
 
   return (
     <main
@@ -65,16 +69,30 @@ export default function HomePage() {
         >
           <h2 style={{ margin: 0 }}>Root issue lookup</h2>
           <p style={{ margin: 0, lineHeight: 1.6 }}>
-            The page confirms whether the requested issue produces a complete visible tree
-            for the current user.
+            Refresh the full requirement snapshot from YouTrack and confirm whether the
+            current tree is trustworthy for downstream calculations.
           </p>
-          <RootIssueForm onResolved={setResult} />
+          <RootIssueForm onResolved={setResult} lastSyncedAt={lastSyncedAt} />
         </div>
 
-        {result?.kind === "success" ? (
+        {(successfulScope || blockedScope) ? (
           <div style={{ ...panelStyle, padding: "24px" }}>
-            <ScopeTree root={result.scope.root} />
+            <ScopeTree
+              root={(successfulScope ?? blockedScope)!.root}
+              blockedIssueKeys={blockedScope?.blockedIssues?.map((issue) => issue.issueKey) ?? []}
+              youTrackBaseUrl={youTrackBaseUrl ?? undefined}
+            />
           </div>
+        ) : null}
+
+        {result?.kind === "blocked" ? (
+          <ScopeState
+            code="SNAPSHOT_BLOCKED"
+            issueKey={result.scope.issueKey}
+            message="The current refresh is blocked because some issues that depend on estimate values are not estimated yet."
+            blockedIssueKeys={result.scope.blockedIssues?.map((issue) => issue.issueKey) ?? []}
+            dismissible
+          />
         ) : null}
 
         {result?.kind === "error" ? (
@@ -94,8 +112,8 @@ export default function HomePage() {
           >
             <h2 style={{ margin: 0 }}>Current state</h2>
             <p style={{ margin: 0, lineHeight: 1.6 }}>
-              No scope has been requested yet. A successful lookup will render a nested tree
-              here, and blocked outcomes will replace it with an explicit phase-one state.
+              No refresh has been requested yet. A successful refresh will render the
+              current tree here together with the latest sync time.
             </p>
           </div>
         )}

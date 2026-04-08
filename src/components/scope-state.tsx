@@ -1,3 +1,7 @@
+"use client";
+
+import { useState } from "react";
+
 import {
   PARTIAL_SCOPE_FORBIDDEN,
   ROOT_ISSUE_FORBIDDEN,
@@ -9,9 +13,12 @@ type ScopeStateProps = {
     | typeof ROOT_ISSUE_NOT_FOUND
     | typeof ROOT_ISSUE_FORBIDDEN
     | typeof PARTIAL_SCOPE_FORBIDDEN
+    | "SNAPSHOT_BLOCKED"
     | "UNKNOWN_ERROR";
   readonly issueKey: string;
   readonly message: string;
+  readonly blockedIssueKeys?: readonly string[];
+  readonly dismissible?: boolean;
 };
 
 const stateCopy = {
@@ -31,6 +38,12 @@ const stateCopy = {
       "Part of the supported subtask tree is hidden from the current user, so no tree can be confirmed.",
     tone: "#9c1c1c",
   },
+  SNAPSHOT_BLOCKED: {
+    title: "Snapshot is blocked",
+    body:
+      "Some issues require estimate values before the refreshed snapshot can be trusted.",
+    tone: "#a63b3b",
+  },
   UNKNOWN_ERROR: {
     title: "Scope request failed",
     body: "The request did not return a usable phase-one result.",
@@ -38,13 +51,26 @@ const stateCopy = {
   },
 } as const;
 
-export function ScopeState({ code, issueKey, message }: ScopeStateProps) {
+export function ScopeState({
+  code,
+  issueKey,
+  message,
+  blockedIssueKeys = [],
+  dismissible = false,
+}: ScopeStateProps) {
   const copy = stateCopy[code];
+  const [dismissed, setDismissed] = useState(false);
+
+  if (dismissible && dismissed) {
+    return null;
+  }
 
   return (
     <section
       aria-live="polite"
       style={{
+        justifySelf: "end",
+        width: "min(360px, 100%)",
         borderRadius: "24px",
         border: `1px solid color-mix(in srgb, ${copy.tone} 30%, transparent)`,
         background: "rgba(255, 250, 242, 0.88)",
@@ -53,6 +79,23 @@ export function ScopeState({ code, issueKey, message }: ScopeStateProps) {
         gap: "10px",
       }}
     >
+      {dismissible ? (
+        <button
+          type="button"
+          onClick={() => setDismissed(true)}
+          style={{
+            justifySelf: "end",
+            border: "none",
+            background: "transparent",
+            color: copy.tone,
+            cursor: "pointer",
+            font: "inherit",
+            fontWeight: 700,
+          }}
+        >
+          dismiss
+        </button>
+      ) : null}
       <div
         style={{
           fontSize: "0.85rem",
@@ -71,6 +114,21 @@ export function ScopeState({ code, issueKey, message }: ScopeStateProps) {
         </p>
       ) : null}
       <p style={{ margin: 0, lineHeight: 1.6 }}>{message}</p>
+      {blockedIssueKeys.length > 0 ? (
+        <ul
+          style={{
+            margin: 0,
+            paddingLeft: "18px",
+            display: "grid",
+            gap: "6px",
+            lineHeight: 1.5,
+          }}
+        >
+          {blockedIssueKeys.map((blockedIssueKey) => (
+            <li key={blockedIssueKey}>{blockedIssueKey}</li>
+          ))}
+        </ul>
+      ) : null}
     </section>
   );
 }

@@ -24,25 +24,39 @@ export type ScopeTreeNode = {
   readonly children: readonly ScopeTreeNode[];
 };
 
-export type ScopeResolutionState =
-  | {
-      readonly status: "ready";
-      readonly root: ScopeTreeNode;
-      readonly nodeCount: number;
-      readonly outcome: Extract<ScopeOutcome, "single-node" | "tree">;
-      readonly syncedAt?: string;
-      readonly totalMinutes?: number;
-      readonly issues?: readonly SnapshotIssueNode[];
-      readonly blockedIssues?: readonly SnapshotIssueNode[];
-    }
-  | {
-      readonly status: Exclude<ScopeStatus, "idle" | "loading" | "ready">;
-      readonly issueKey: string;
-      readonly outcome: Exclude<ScopeOutcome, "single-node" | "tree">;
-      readonly root?: ScopeTreeNode;
-      readonly nodeCount?: number;
-      readonly syncedAt?: string;
-      readonly totalMinutes?: number | null;
-      readonly issues?: readonly SnapshotIssueNode[];
-      readonly blockedIssues?: readonly SnapshotIssueNode[];
-    };
+export type ReadyScopeState = {
+  readonly status: "ready";
+  readonly root: ScopeTreeNode;
+  readonly nodeCount: number;
+  readonly outcome: Extract<ScopeOutcome, "single-node" | "tree">;
+  readonly syncedAt?: string;
+  readonly totalMinutes?: number;
+  readonly issues?: readonly SnapshotIssueNode[];
+  readonly blockedIssues?: readonly SnapshotIssueNode[];
+};
+
+export type BlockedSnapshotState = {
+  readonly status: "snapshot_blocked";
+  readonly issueKey: string;
+  readonly outcome: "snapshot-blocked";
+  readonly root: ScopeTreeNode;
+  readonly nodeCount: number;
+  readonly syncedAt: string;
+  readonly totalMinutes: null;
+  readonly issues: readonly SnapshotIssueNode[];
+  readonly blockedIssues: readonly SnapshotIssueNode[];
+};
+
+export type ErrorScopeState = {
+  readonly status: Exclude<ScopeStatus, "idle" | "loading" | "ready" | "snapshot_blocked">;
+  readonly issueKey: string;
+  readonly outcome: Exclude<ScopeOutcome, "single-node" | "tree" | "snapshot-blocked">;
+  readonly root?: ScopeTreeNode;
+  readonly nodeCount?: number;
+  readonly syncedAt?: string;
+  readonly totalMinutes?: number | null;
+  readonly issues?: readonly SnapshotIssueNode[];
+  readonly blockedIssues?: readonly SnapshotIssueNode[];
+};
+
+export type ScopeResolutionState = ReadyScopeState | BlockedSnapshotState | ErrorScopeState;

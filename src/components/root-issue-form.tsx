@@ -7,12 +7,20 @@ import {
   ROOT_ISSUE_FORBIDDEN,
   ROOT_ISSUE_NOT_FOUND,
 } from "../lib/youtrack/errors";
-import type { ScopeResolutionState } from "../lib/scope/types";
+import type {
+  BlockedSnapshotState,
+  ReadyScopeState,
+  ScopeResolutionState,
+} from "../lib/scope/types";
 
 export type RootIssueFormResult =
   | {
       readonly kind: "success";
-      readonly scope: Extract<ScopeResolutionState, { readonly status: "ready" }>;
+      readonly scope: ReadyScopeState;
+    }
+  | {
+      readonly kind: "blocked";
+      readonly scope: BlockedSnapshotState;
     }
   | {
       readonly kind: "error";
@@ -27,6 +35,7 @@ export type RootIssueFormResult =
 
 type RootIssueFormProps = {
   readonly onResolved: (result: RootIssueFormResult) => void;
+  readonly lastSyncedAt?: string;
 };
 
 function getErrorCode(status: number) {
@@ -45,7 +54,7 @@ function getErrorCode(status: number) {
   return "UNKNOWN_ERROR" as const;
 }
 
-export function RootIssueForm({ onResolved }: RootIssueFormProps) {
+export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) {
   const [rootIssueKey, setRootIssueKey] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -79,6 +88,14 @@ export function RootIssueForm({ onResolved }: RootIssueFormProps) {
       const payload = (await response.json()) as ScopeResolutionState & {
         readonly message?: string;
       };
+
+      if (payload.status === "snapshot_blocked") {
+        onResolved({
+          kind: "blocked",
+          scope: payload,
+        });
+        return;
+      }
 
       if (response.ok && payload.status === "ready") {
         onResolved({
@@ -160,8 +177,18 @@ export function RootIssueForm({ onResolved }: RootIssueFormProps) {
           color: "#fff7ea",
         }}
       >
-        {isSubmitting ? "Resolving scope..." : "Discover scope"}
+        {isSubmitting ? "Refreshing snapshot..." : "Refresh snapshot"}
       </button>
+
+      <p
+        style={{
+          margin: 0,
+          fontSize: "0.95rem",
+          color: "#6b5128",
+        }}
+      >
+        Last sync: {lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : "No successful refresh yet"}
+      </p>
     </form>
   );
 }
