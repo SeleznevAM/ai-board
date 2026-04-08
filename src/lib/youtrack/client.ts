@@ -20,7 +20,7 @@ export type FetchIssueResult =
     };
 
 const ISSUE_FIELDS =
-  "id,idReadable,summary,parent(id),subtasks(id,issues(id,idReadable))";
+  "id,idReadable,summary,parent(id),subtasks(id,issues(id,idReadable)),customFields(name,value(name,minutes,presentation,text),$type)";
 const RESPONSE_LOG_PREVIEW_LENGTH = 1200;
 
 function buildIssueUrl(baseUrl: string, issueKeyOrId: string): URL {
@@ -33,6 +33,10 @@ type YouTrackSubtaskRef = {
   readonly id: string;
   readonly idReadable: string;
 };
+
+const STATUS_FIELD_NAMES = ["state", "статус"];
+const ESTIMATE_FIELD_NAMES = ["estimation", "estimate", "оценка"];
+const SPENT_FIELD_NAMES = ["spent time", "затраченное время"];
 
 function normalizeSubtasks(
   subtasks: YouTrackIssueApiPayload["subtasks"],
@@ -56,6 +60,56 @@ function normalizeSubtasks(
   return [];
 }
 
+function normalizeFieldName(name: string): string {
+  return name.trim().toLowerCase();
+}
+
+function findCustomField(
+  customFields: YouTrackIssueApiPayload["customFields"],
+  fieldNames: readonly string[],
+) {
+  if (!Array.isArray(customFields)) {
+    return null;
+  }
+
+  const normalizedNames = new Set(fieldNames.map(normalizeFieldName));
+  return (
+    customFields.find((field) => normalizedNames.has(normalizeFieldName(field.name))) ??
+    null
+  );
+}
+
+function extractFieldValue(
+  field: ReturnType<typeof findCustomField>,
+): null | { readonly name?: string; readonly minutes?: number; readonly presentation?: string; readonly text?: string } {
+  if (!field || field.value === null || field.value === undefined) {
+    return null;
+  }
+
+  if (Array.isArray(field.value)) {
+    return field.value[0] ?? null;
+  }
+
+  if (typeof field.value === "object") {
+    return field.value;
+  }
+
+  return null;
+}
+
+function extractStatusName(customFields: YouTrackIssueApiPayload["customFields"]): string | null {
+  const value = extractFieldValue(findCustomField(customFields, STATUS_FIELD_NAMES));
+  return value?.name ?? value?.presentation ?? value?.text ?? null;
+}
+
+function extractMinutesValue(
+  customFields: YouTrackIssueApiPayload["customFields"],
+  fieldNames: readonly string[],
+): number | null {
+  const value = extractFieldValue(findCustomField(customFields, fieldNames));
+  return typeof value?.minutes === "number" ? value.minutes : null;
+}
+
 function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
   const childIds = normalizeSubtasks(payload.subtasks).map((issue) => issue.id);
 
@@ -67,11 +121,16 @@ function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
     childIds,
     childCount: childIds.length,
     childrenVisibility: "complete",
+    statusName: extractStatusName(payload.customFields),
+    estimateMinutes: extractMinutesValue(payload.customFields, ESTIMATE_FIELD_NAMES),
+    spentMinutes: extractMinutesValue(payload.customFields, SPENT_FIELD_NAMES),
   };
 }
 
 export const __private__ = {
   normalizeSubtasks,
+  extractStatusName,
+  extractMinutesValue,
 };
 
 function previewBody(body: string): string {

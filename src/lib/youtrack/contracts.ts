@@ -11,6 +11,9 @@ export type YouTrackIssueNode = YouTrackIssueIdentifier & {
   readonly childIds: readonly string[];
   readonly childCount: number;
   readonly childrenVisibility: YouTrackIssueVisibility;
+  readonly statusName: string | null;
+  readonly estimateMinutes: number | null;
+  readonly spentMinutes: number | null;
 };
 
 export type YouTrackIssueLookupPayload = {
@@ -40,6 +43,26 @@ export type YouTrackIssueApiPayload = {
           readonly idReadable: string;
         }[];
       }
+    | null;
+  readonly customFields?:
+    | readonly {
+        readonly name: string;
+        readonly $type?: string;
+        readonly value?:
+          | null
+          | {
+              readonly name?: string;
+              readonly minutes?: number;
+              readonly presentation?: string;
+              readonly text?: string;
+            }
+          | readonly {
+              readonly name?: string;
+              readonly minutes?: number;
+              readonly presentation?: string;
+              readonly text?: string;
+            }[];
+      }[]
     | null;
 };
 

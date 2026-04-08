@@ -27,6 +27,9 @@ function issueNode(
     childIds: [],
     childCount: 0,
     childrenVisibility: "complete",
+    statusName: null,
+    estimateMinutes: null,
+    spentMinutes: null,
     ...overrides,
   };
 }
