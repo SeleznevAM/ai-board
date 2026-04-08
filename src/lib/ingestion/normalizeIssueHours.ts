@@ -51,6 +51,7 @@ export function normalizeIssueHours(issue: YouTrackIssueNode): SnapshotIssueNode
     normalizedMinutes,
     estimateMinutes: issue.estimateMinutes,
     spentMinutes: issue.spentMinutes,
+    assignee: issue.assignee,
     blocked: problem !== null,
     problem,
   };

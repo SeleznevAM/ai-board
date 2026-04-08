@@ -22,6 +22,7 @@ function issueNode(
     statusName: null,
     estimateMinutes: null,
     spentMinutes: null,
+    assignee: null,
     ...overrides,
   };
 }

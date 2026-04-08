@@ -3,6 +3,12 @@ export type YouTrackIssueIdentifier = {
   readonly key: string;
 };
 
+export type YouTrackAssignee = {
+  readonly id: string | null;
+  readonly login: string | null;
+  readonly displayName: string | null;
+};
+
 export type YouTrackIssueVisibility = "complete" | "blocked";
 
 export type YouTrackIssueNode = YouTrackIssueIdentifier & {
@@ -14,6 +20,7 @@ export type YouTrackIssueNode = YouTrackIssueIdentifier & {
   readonly statusName: string | null;
   readonly estimateMinutes: number | null;
   readonly spentMinutes: number | null;
+  readonly assignee: YouTrackAssignee | null;
 };
 
 export type YouTrackIssueLookupPayload = {
@@ -55,12 +62,18 @@ export type YouTrackIssueApiPayload = {
               readonly minutes?: number;
               readonly presentation?: string;
               readonly text?: string;
+              readonly login?: string;
+              readonly fullName?: string;
+              readonly id?: string;
             }
           | readonly {
               readonly name?: string;
               readonly minutes?: number;
               readonly presentation?: string;
               readonly text?: string;
+              readonly login?: string;
+              readonly fullName?: string;
+              readonly id?: string;
             }[];
       }[]
     | null;

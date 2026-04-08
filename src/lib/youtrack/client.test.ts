@@ -42,3 +42,28 @@ describe("normalizeSubtasks", () => {
     expect(__private__.normalizeSubtasks({})).toEqual([]);
   });
 });
+
+describe("extractAssignee", () => {
+  it("extracts assignee identity from the исполнител field", () => {
+    expect(
+      __private__.extractAssignee([
+        {
+          name: "Исполнитель",
+          value: {
+            id: "1-1",
+            login: "anna",
+            fullName: "Anna Ivanova",
+          },
+        },
+      ]),
+    ).toEqual({
+      id: "1-1",
+      login: "anna",
+      displayName: "Anna Ivanova",
+    });
+  });
+
+  it("returns null when no assignee field is present", () => {
+    expect(__private__.extractAssignee(null)).toBeNull();
+  });
+});

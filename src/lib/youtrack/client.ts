@@ -1,5 +1,6 @@
 import type {
   RootIssueLookupResult,
+  YouTrackAssignee,
   YouTrackIssueApiPayload,
   YouTrackIssueNode,
 } from "./contracts";
@@ -20,7 +21,7 @@ export type FetchIssueResult =
     };
 
 const ISSUE_FIELDS =
-  "id,idReadable,summary,parent(id),subtasks(id,issues(id,idReadable)),customFields(name,value(name,minutes,presentation,text),$type)";
+  "id,idReadable,summary,parent(id),subtasks(id,issues(id,idReadable)),customFields(name,value(name,minutes,presentation,text,login,fullName,id),$type)";
 const RESPONSE_LOG_PREVIEW_LENGTH = 1200;
 
 function buildIssueUrl(baseUrl: string, issueKeyOrId: string): URL {
@@ -37,6 +38,7 @@ type YouTrackSubtaskRef = {
 const STATUS_FIELD_NAMES = ["state", "статус"];
 const ESTIMATE_FIELD_NAMES = ["estimation", "estimate", "оценка"];
 const SPENT_FIELD_NAMES = ["spent time", "затраченное время"];
+const ASSIGNEE_FIELD_NAMES = ["assignee", "исполнитель"];
 
 function normalizeSubtasks(
   subtasks: YouTrackIssueApiPayload["subtasks"],
@@ -81,7 +83,15 @@ function findCustomField(
 
 function extractFieldValue(
   field: ReturnType<typeof findCustomField>,
-): null | { readonly name?: string; readonly minutes?: number; readonly presentation?: string; readonly text?: string } {
+): null | {
+  readonly name?: string;
+  readonly minutes?: number;
+  readonly presentation?: string;
+  readonly text?: string;
+  readonly login?: string;
+  readonly fullName?: string;
+  readonly id?: string;
+} {
   if (!field || field.value === null || field.value === undefined) {
     return null;
   }
@@ -110,6 +120,30 @@ function extractMinutesValue(
   return typeof value?.minutes === "number" ? value.minutes : null;
 }
 
+function extractAssignee(
+  customFields: YouTrackIssueApiPayload["customFields"],
+): YouTrackAssignee | null {
+  const value = extractFieldValue(findCustomField(customFields, ASSIGNEE_FIELD_NAMES));
+  if (!value) {
+    return null;
+  }
+
+  const displayName =
+    value.fullName ?? value.name ?? value.presentation ?? value.text ?? null;
+  const login = value.login ?? null;
+  const id = value.id ?? null;
+
+  if (!displayName && !login && !id) {
+    return null;
+  }
+
+  return {
+    id,
+    login,
+    displayName,
+  };
+}
+
 function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
   const childIds = normalizeSubtasks(payload.subtasks).map((issue) => issue.id);
 
@@ -124,6 +158,7 @@ function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
     statusName: extractStatusName(payload.customFields),
     estimateMinutes: extractMinutesValue(payload.customFields, ESTIMATE_FIELD_NAMES),
     spentMinutes: extractMinutesValue(payload.customFields, SPENT_FIELD_NAMES),
+    assignee: extractAssignee(payload.customFields),
   };
 }
 
@@ -131,6 +166,7 @@ export const __private__ = {
   normalizeSubtasks,
   extractStatusName,
   extractMinutesValue,
+  extractAssignee,
 };
 
 function previewBody(body: string): string {
