@@ -14,7 +14,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: YouTrack Data Contract** - Пользователь вводит root issue и видит, какую поддерживаемую иерархию система реально возьмет в расчет.
 - [x] **Phase 2: Ingestion Correctness** - Система надежно синхронизирует задачи и worklog-данные из YouTrack и явно показывает полноту расчета.
-- [ ] **Phase 3: Cost Engine** - Импортированные трудозатраты превращаются в себестоимость и базовую рентабельность по требованию и направлениям.
+- [x] **Phase 3: Cost Engine** - Импортированные трудозатраты превращаются в себестоимость и базовую рентабельность по требованию и направлениям.
 - [ ] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
 - [ ] **Phase 5: PM Dashboard** - Пользователь получает быстрый экран принятия решения с итогами, цветовой индикацией и вкладом направлений.
 
@@ -57,7 +57,11 @@ Plans:
   2. Пользователь видит часы, себестоимость и денежные показатели по требованию целиком и по каждому направлению отдельно.
   3. Система рассчитывает фактическую рентабельность по фиксированной формуле и не показывает ложный процент, если бюджет отсутствует или некорректен.
   4. Если фактическая рентабельность опускается ниже 20%, система показывает сумму, которую нужно дополнительно согласовать для возврата к целевой норме.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [x] 03-01-PLAN.md - Add assignee-aware costing contracts and directory fallback rules.
+- [x] 03-02-PLAN.md - Build direction-budget allocation, cost aggregation, and profitability math.
+- [x] 03-03-PLAN.md - Add the assignee directory page and wire the profitability workspace into the main requirement flow.
 
 ### Phase 4: Scenario Editing
 **Goal**: Менеджер может редактировать бюджеты и дополнительные часы как отдельный сценарий, не смешивая их с импортированными данными YouTrack.
@@ -92,6 +96,6 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 |-------|----------------|--------|-----------|
 | 1. YouTrack Data Contract | 3/3 | Complete | 2026-04-07 |
 | 2. Ingestion Correctness | 3/3 | Complete | 2026-04-08 |
-| 3. Cost Engine | 0/TBD | Not started | - |
+| 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
 | 4. Scenario Editing | 0/TBD | Not started | - |
 | 5. PM Dashboard | 0/TBD | Not started | - |

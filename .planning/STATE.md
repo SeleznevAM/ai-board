@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: planning
-stopped_at: Completed 02-ingestion-correctness-02-03-PLAN.md
-last_updated: "2026-04-08T17:16:36Z"
-last_activity: 2026-04-08 -- Phase 02 completed
+stopped_at: Completed 03-cost-engine-03-03-PLAN.md
+last_updated: "2026-04-08T18:19:21Z"
+last_activity: 2026-04-08 -- Phase 03 completed
 progress:
   total_phases: 5
-  completed_phases: 2
-  total_plans: 6
-  completed_plans: 6
-  percent: 40
+  completed_phases: 3
+  total_plans: 9
+  completed_plans: 9
+  percent: 60
 ---
 
 # Project State
@@ -21,24 +21,24 @@ progress:
 See: .planning/PROJECT.md (updated 2026-04-05)
 
 **Core value:** Позволять в моменте понять, остается ли требование прибыльным и сколько денег нужно дополнительно согласовать с заказчиком для выхода на целевую рентабельность.
-**Current focus:** Phase 03 — cost-engine
+**Current focus:** Phase 04 — scenario-editing
 
 ## Current Position
 
-Phase: 03 (cost-engine) — READY TO PLAN
+Phase: 04 (scenario-editing) — READY TO PLAN
 Plan: 0 of TBD
-Status: Phase 02 complete, Phase 03 pending planning
-Last activity: 2026-04-08 -- Phase 02 completed
+Status: Phase 03 complete, Phase 04 pending planning
+Last activity: 2026-04-08 -- Phase 03 completed
 
-Progress: [████░░░░░░] 40%
+Progress: [██████░░░░] 60%
 
 ## Performance Metrics
 
 **Velocity:**
 
-- Total plans completed: 6
+- Total plans completed: 9
 - Average duration: 20 min
-- Total execution time: 2.0 hours
+- Total execution time: 3.0 hours
 
 **By Phase:**
 
@@ -46,10 +46,11 @@ Progress: [████░░░░░░] 40%
 |-------|-------|-------|----------|
 | 01-youtrack-data-contract | 3 | 60 min | 20 min |
 | 02-ingestion-correctness | 3 | 60 min | 20 min |
+| 03-cost-engine | 3 | 60 min | 20 min |
 
 **Recent Trend:**
 
-- Last 5 plans: 20 min, 20 min, 15 min, 20 min, 15 min
+- Last 5 plans: 20 min, 20 min, 20 min, 20 min, 20 min
 - Trend: Stable
 
 *Updated after each plan completion*
@@ -59,6 +60,9 @@ Progress: [████░░░░░░] 40%
 | Phase 02 P01 | 20 min | 2 tasks | 6 files |
 | Phase 02 P02 | 20 min | 2 tasks | 4 files |
 | Phase 02 P03 | 20 min | 2 tasks | 5 files |
+| Phase 03 P01 | 20 min | 2 tasks | 10 files |
+| Phase 03 P02 | 20 min | 3 tasks | 7 files |
+| Phase 03 P03 | 20 min | 2 tasks | 8 files |
 
 ## Accumulated Context
 
@@ -75,6 +79,9 @@ Recent decisions affecting current work:
 - [Phase 02-ingestion-correctness]: Requirement refresh always rebuilds from the canonical phase-one tree rather than mutating prior snapshot state.
 - [Phase 02-ingestion-correctness]: Status-based normalization chooses spent time only for explicitly closed statuses and estimate everywhere else.
 - [Phase 02-ingestion-correctness]: Missing estimates block the snapshot and are rendered as actionable diagnostics in-context instead of being coerced to zero.
+- [Phase 03-cost-engine]: Roles and rates live in an app-managed assignee directory instead of YouTrack profile metadata.
+- [Phase 03-cost-engine]: One total budget is expanded into per-direction budgets through equal distribution plus manual overrides, with `unmapped` excluded from auto-allocation.
+- [Phase 03-cost-engine]: Missing-assignee and unmapped spend remain visible in totals and tree warnings instead of being hidden or zeroed out.
 
 ### Pending Todos
 
@@ -82,10 +89,10 @@ None yet.
 
 ### Blockers/Concerns
 
-- Need phase-3 confirmation of role source of truth and accepted rate-card policy for v1.
+- Need phase-4 decisions for scenario persistence and provenance once user-edited budgets and extra hours become first-class artifacts.
 
 ## Session Continuity
 
-Last session: 2026-04-08T17:16:36Z
-Stopped at: Completed 02-ingestion-correctness-02-03-PLAN.md
+Last session: 2026-04-08T18:19:21Z
+Stopped at: Completed 03-cost-engine-03-03-PLAN.md
 Resume file: None
