@@ -3,19 +3,23 @@ import type { ScopeTreeNode } from "../lib/scope/types";
 type ScopeTreeProps = {
   readonly root: ScopeTreeNode;
   readonly blockedIssueKeys?: readonly string[];
+  readonly missingAssigneeIssueKeys?: readonly string[];
   readonly youTrackBaseUrl?: string;
 };
 
 function TreeBranch({
   node,
   blockedIssueKeys,
+  missingAssigneeIssueKeys,
   youTrackBaseUrl,
 }: {
   readonly node: ScopeTreeNode;
   readonly blockedIssueKeys: ReadonlySet<string>;
+  readonly missingAssigneeIssueKeys: ReadonlySet<string>;
   readonly youTrackBaseUrl: string | null;
 }) {
   const isBlocked = blockedIssueKeys.has(node.issue.key);
+  const isMissingAssignee = missingAssigneeIssueKeys.has(node.issue.key);
   const issueUrl = youTrackBaseUrl
     ? `${youTrackBaseUrl.replace(/\/$/, "")}/issue/${node.issue.key}`
     : null;
@@ -32,13 +36,23 @@ function TreeBranch({
           borderRadius: "16px",
           border: isBlocked
             ? "1px solid rgba(186, 79, 79, 0.34)"
+            : isMissingAssignee
+            ? "1px solid rgba(186, 79, 79, 0.34)"
             : "1px solid rgba(75, 49, 11, 0.16)",
-          background: isBlocked ? "rgba(255, 240, 238, 0.94)" : "rgba(255, 252, 247, 0.92)",
+          background:
+            isBlocked || isMissingAssignee
+              ? "rgba(255, 240, 238, 0.94)"
+              : "rgba(255, 252, 247, 0.92)",
           padding: "14px 16px",
         }}
       >
         <div style={{ fontWeight: 700 }}>{node.issue.key}</div>
         <div style={{ marginTop: "6px", lineHeight: 1.5 }}>{node.issue.summary}</div>
+        {node.issue.assignee?.displayName || node.issue.assignee?.login ? (
+          <p style={{ margin: "10px 0 0", lineHeight: 1.5 }}>
+            Assignee: {node.issue.assignee?.displayName ?? node.issue.assignee?.login}
+          </p>
+        ) : null}
         {isBlocked ? (
           <p
             style={{
@@ -48,6 +62,17 @@ function TreeBranch({
             }}
           >
             This issue is missing estimate data required for the current snapshot.
+          </p>
+        ) : null}
+        {isMissingAssignee ? (
+          <p
+            style={{
+              margin: "10px 0 0",
+              color: "#9b3030",
+              lineHeight: 1.5,
+            }}
+          >
+            This issue has no assignee. It is costed with the average rate and counted as unmapped.
           </p>
         ) : null}
         {issueUrl ? (
@@ -84,6 +109,7 @@ function TreeBranch({
               key={child.issue.id}
               node={child}
               blockedIssueKeys={blockedIssueKeys}
+              missingAssigneeIssueKeys={missingAssigneeIssueKeys}
               youTrackBaseUrl={youTrackBaseUrl}
             />
           ))}
@@ -93,8 +119,14 @@ function TreeBranch({
   );
 }
 
-export function ScopeTree({ root, blockedIssueKeys = [], youTrackBaseUrl }: ScopeTreeProps) {
+export function ScopeTree({
+  root,
+  blockedIssueKeys = [],
+  missingAssigneeIssueKeys = [],
+  youTrackBaseUrl,
+}: ScopeTreeProps) {
   const blockedSet = new Set(blockedIssueKeys);
+  const missingAssigneeSet = new Set(missingAssigneeIssueKeys);
 
   return (
     <section
@@ -124,6 +156,7 @@ export function ScopeTree({ root, blockedIssueKeys = [], youTrackBaseUrl }: Scop
         <TreeBranch
           node={root}
           blockedIssueKeys={blockedSet}
+          missingAssigneeIssueKeys={missingAssigneeSet}
           youTrackBaseUrl={youTrackBaseUrl ?? null}
         />
       </ul>

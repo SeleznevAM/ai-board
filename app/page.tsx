@@ -1,10 +1,22 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
 
+import { BudgetAllocationForm } from "../src/components/budget-allocation-form";
+import { CostSummary } from "../src/components/cost-summary";
+import { DirectionBreakdown } from "../src/components/direction-breakdown";
 import { RootIssueForm, type RootIssueFormResult } from "../src/components/root-issue-form";
 import { ScopeState } from "../src/components/scope-state";
 import { ScopeTree } from "../src/components/scope-tree";
+import { allocateEvenBudgets } from "../src/lib/costing/budgetAllocation";
+import { calculateRequirementCost } from "../src/lib/costing/calculateRequirementCost";
+import {
+  calculateDirectionProfitability,
+  calculateRequirementProfitability,
+} from "../src/lib/costing/calculateProfitability";
+import { loadAssigneeDirectory } from "../src/lib/costing/storage";
+import type { AssigneeDirectoryEntry, DirectionBudgetMap } from "../src/lib/costing/types";
 
 const panelStyle = {
   borderRadius: "24px",
@@ -15,10 +27,35 @@ const panelStyle = {
 
 export default function HomePage() {
   const [result, setResult] = useState<RootIssueFormResult | null>(null);
+  const [assigneeDirectory, setAssigneeDirectory] = useState<AssigneeDirectoryEntry[]>([]);
+  const [budgetState, setBudgetState] = useState<{
+    totalBudget: number | null;
+    directionBudgets: DirectionBudgetMap;
+  }>({
+    totalBudget: null,
+    directionBudgets: allocateEvenBudgets(0),
+  });
   const youTrackBaseUrl = process.env.NEXT_PUBLIC_YOUTRACK_BASE_URL ?? null;
   const successfulScope = result?.kind === "success" ? result.scope : null;
   const blockedScope = result?.kind === "blocked" ? result.scope : null;
   const lastSyncedAt = successfulScope?.syncedAt ?? blockedScope?.syncedAt;
+  const costResult = successfulScope?.issues
+    ? calculateRequirementCost(successfulScope.issues, assigneeDirectory)
+    : null;
+  const profitability = costResult
+    ? calculateRequirementProfitability(budgetState.totalBudget, costResult.totalCost)
+    : null;
+  const directionProfitability = costResult
+    ? calculateDirectionProfitability(budgetState.directionBudgets, costResult.directionTotals)
+    : [];
+  const missingAssigneeIssueKeys =
+    costResult?.ledger
+      .filter((row) => row.warning === "MISSING_ASSIGNEE")
+      .map((row) => row.issueKey) ?? [];
+
+  useEffect(() => {
+    setAssigneeDirectory(loadAssigneeDirectory());
+  }, []);
 
   return (
     <main
@@ -48,14 +85,14 @@ export default function HomePage() {
               color: "#7a5a22",
             }}
           >
-            Phase 1 scope discovery
+            Phase 3 cost engine
           </p>
           <h1 style={{ margin: 0, fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-            YouTrack scope discovery
+            Requirement profitability workspace
           </h1>
           <p style={{ maxWidth: "62ch", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
-            Enter a root issue to verify the supported requirement scope for phase one.
-            In this phase only the subtask hierarchy is supported.
+            Refresh one requirement from YouTrack, map assignees to roles and rates,
+            then see hours, cost, budgets, and profitability in one place.
           </p>
         </header>
 
@@ -75,14 +112,54 @@ export default function HomePage() {
           <RootIssueForm onResolved={setResult} lastSyncedAt={lastSyncedAt} />
         </div>
 
+        <div
+          style={{
+            ...panelStyle,
+            padding: "24px",
+            display: "grid",
+            gap: "12px",
+          }}
+        >
+          <h2 style={{ margin: 0 }}>Assignee directory</h2>
+          <p style={{ margin: 0, lineHeight: 1.6 }}>
+            Maintain the assignee to role and rate mapping before trusting direction costs.
+          </p>
+          <Link href="/assignees" style={{ color: "#6f4a16", fontWeight: 700, textDecoration: "none" }}>
+            Open assignee directory
+          </Link>
+        </div>
+
+        {successfulScope ? (
+          <BudgetAllocationForm
+            totalBudget={budgetState.totalBudget}
+            directionBudgets={budgetState.directionBudgets}
+            onChange={setBudgetState}
+          />
+        ) : null}
+
         {(successfulScope || blockedScope) ? (
           <div style={{ ...panelStyle, padding: "24px" }}>
             <ScopeTree
               root={(successfulScope ?? blockedScope)!.root}
               blockedIssueKeys={blockedScope?.blockedIssues?.map((issue) => issue.issueKey) ?? []}
+              missingAssigneeIssueKeys={missingAssigneeIssueKeys}
               youTrackBaseUrl={youTrackBaseUrl ?? undefined}
             />
           </div>
+        ) : null}
+
+        {costResult && profitability ? (
+          <>
+            <CostSummary
+              totalHours={costResult.totalHours}
+              totalCost={costResult.totalCost}
+              profitability={profitability}
+            />
+            <DirectionBreakdown
+              directionTotals={costResult.directionTotals}
+              profitability={directionProfitability}
+            />
+          </>
         ) : null}
 
         {result?.kind === "blocked" ? (
@@ -101,7 +178,7 @@ export default function HomePage() {
             issueKey={result.issueKey}
             message={result.message}
           />
-        ) : (
+        ) : result === null ? (
           <div
             style={{
               ...panelStyle,
@@ -116,7 +193,7 @@ export default function HomePage() {
               current tree here together with the latest sync time.
             </p>
           </div>
-        )}
+        ) : null}
       </section>
     </main>
   );
