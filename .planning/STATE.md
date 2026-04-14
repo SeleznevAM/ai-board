@@ -82,6 +82,8 @@ Recent decisions affecting current work:
 - [Phase 03-cost-engine]: Roles and rates live in an app-managed assignee directory instead of YouTrack profile metadata.
 - [Phase 03-cost-engine]: One total budget is expanded into per-direction budgets through equal distribution plus manual overrides, with `unmapped` excluded from auto-allocation.
 - [Phase 03-cost-engine]: Missing-assignee and unmapped spend remain visible in totals and tree warnings instead of being hidden or zeroed out.
+- [Phase 04-scenario-editing]: Scenario hours are added at the task card level, priced by the task's assigned performer, and stay separate from the canonical YouTrack snapshot.
+- [Phase 04-scenario-editing]: Scenario state is local to the current screen and must trigger a confirmation before a refresh would discard pending scenario hours.
 
 ### Pending Todos
 
