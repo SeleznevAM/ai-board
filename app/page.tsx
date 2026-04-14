@@ -17,9 +17,11 @@ import {
 } from "../src/lib/costing/calculateProfitability";
 import { loadAssigneeDirectory } from "../src/lib/costing/storage";
 import type { AssigneeDirectoryEntry, DirectionBudgetMap } from "../src/lib/costing/types";
+import { calculateScenarioForecast } from "../src/lib/scenario/forecast";
 import {
   createScenarioState,
   hasScenarioChanges,
+  updateScenarioExtraHours,
   updateScenarioBudget,
 } from "../src/lib/scenario/state";
 import type { ScenarioState } from "../src/lib/scenario/types";
@@ -64,6 +66,29 @@ export default function HomePage() {
       .filter((row) => row.warning === "MISSING_ASSIGNEE")
       .map((row) => row.issueKey) ?? [];
   const scenarioDirty = scenarioState ? hasScenarioChanges(scenarioState) : false;
+  const scenarioForecast = useMemo(() => {
+    if (!successfulScope?.issues || !costResult || !profitability || !scenarioState) {
+      return null;
+    }
+
+    return calculateScenarioForecast({
+      issues: successfulScope.issues,
+      directoryEntries: assigneeDirectory,
+      current: {
+        cost: costResult,
+        profitability,
+        directionProfitability,
+      },
+      scenario: scenarioState,
+    });
+  }, [
+    assigneeDirectory,
+    costResult,
+    directionProfitability,
+    profitability,
+    scenarioState,
+    successfulScope?.issues,
+  ]);
 
   useEffect(() => {
     setAssigneeDirectory(loadAssigneeDirectory());
@@ -78,11 +103,13 @@ export default function HomePage() {
 
     if (nextResult.kind === "success" || nextResult.kind === "blocked") {
       const baselineBudgets = createBaselineBudgets();
+      const rootIssueKey =
+        nextResult.kind === "success" ? nextResult.scope.root.issue.key : nextResult.scope.issueKey;
 
       setScenarioState(
         createScenarioState({
-          rootIssueKey: nextResult.scope.issueKey,
-          lastSyncedAt: nextResult.scope.syncedAt,
+          rootIssueKey,
+          lastSyncedAt: nextResult.scope.syncedAt ?? null,
           baselineBudgets,
         }),
       );
@@ -115,10 +142,40 @@ export default function HomePage() {
     });
   }
 
+  function handleApplyScenarioExtraHours(issueKey: string, hours: number) {
+    setScenarioState((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return updateScenarioExtraHours(current, issueKey, hours);
+    });
+  }
+
+  function handleClearScenarioExtraHours(issueKey: string) {
+    setScenarioState((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return updateScenarioExtraHours(current, issueKey, 0);
+    });
+  }
+
   const baselineTotalBudget = scenarioState
     ? Object.values(scenarioState.baselineBudgets).reduce((sum, value) => sum + value, 0)
     : null;
   const activeDirectionBudgets = scenarioState?.scenarioBudgets ?? allocateEvenBudgets(0);
+  const scenarioIssueStateByIssueKey = Object.fromEntries(
+    (scenarioForecast?.scenarioLedger ?? []).map((row) => [
+      row.issueKey,
+      {
+        extraHours: row.addedHours,
+        assigneeLabel: row.assigneeLabel,
+        addedCost: row.addedCost,
+      },
+    ]),
+  );
 
   return (
     <main
@@ -212,6 +269,10 @@ export default function HomePage() {
               blockedIssueKeys={blockedScope?.blockedIssues?.map((issue) => issue.issueKey) ?? []}
               missingAssigneeIssueKeys={missingAssigneeIssueKeys}
               youTrackBaseUrl={youTrackBaseUrl ?? undefined}
+              scenarioExtraHoursByIssueKey={scenarioState?.extraHoursByIssueKey}
+              scenarioIssueStateByIssueKey={scenarioIssueStateByIssueKey}
+              onApplyScenarioExtraHours={successfulScope ? handleApplyScenarioExtraHours : undefined}
+              onClearScenarioExtraHours={successfulScope ? handleClearScenarioExtraHours : undefined}
             />
           </div>
         ) : null}
