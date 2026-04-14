@@ -36,6 +36,7 @@ export type RootIssueFormResult =
 type RootIssueFormProps = {
   readonly onResolved: (result: RootIssueFormResult) => void;
   readonly lastSyncedAt?: string;
+  readonly onBeforeSubmit?: () => boolean;
 };
 
 function getErrorCode(status: number) {
@@ -54,7 +55,11 @@ function getErrorCode(status: number) {
   return "UNKNOWN_ERROR" as const;
 }
 
-export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) {
+export function RootIssueForm({
+  onResolved,
+  lastSyncedAt,
+  onBeforeSubmit,
+}: RootIssueFormProps) {
   const [rootIssueKey, setRootIssueKey] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -69,6 +74,10 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
         issueKey: "",
         message: "Enter a root issue key before requesting scope discovery.",
       });
+      return;
+    }
+
+    if (onBeforeSubmit && !onBeforeSubmit()) {
       return;
     }
 

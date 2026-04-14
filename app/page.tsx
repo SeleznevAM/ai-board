@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { BudgetAllocationForm } from "../src/components/budget-allocation-form";
 import { CostSummary } from "../src/components/cost-summary";
@@ -17,6 +17,12 @@ import {
 } from "../src/lib/costing/calculateProfitability";
 import { loadAssigneeDirectory } from "../src/lib/costing/storage";
 import type { AssigneeDirectoryEntry, DirectionBudgetMap } from "../src/lib/costing/types";
+import {
+  createScenarioState,
+  hasScenarioChanges,
+  updateScenarioBudget,
+} from "../src/lib/scenario/state";
+import type { ScenarioState } from "../src/lib/scenario/types";
 
 const panelStyle = {
   borderRadius: "24px",
@@ -28,13 +34,7 @@ const panelStyle = {
 export default function HomePage() {
   const [result, setResult] = useState<RootIssueFormResult | null>(null);
   const [assigneeDirectory, setAssigneeDirectory] = useState<AssigneeDirectoryEntry[]>([]);
-  const [budgetState, setBudgetState] = useState<{
-    totalBudget: number | null;
-    directionBudgets: DirectionBudgetMap;
-  }>({
-    totalBudget: null,
-    directionBudgets: allocateEvenBudgets(0),
-  });
+  const [scenarioState, setScenarioState] = useState<ScenarioState | null>(null);
   const youTrackBaseUrl = process.env.NEXT_PUBLIC_YOUTRACK_BASE_URL ?? null;
   const successfulScope = result?.kind === "success" ? result.scope : null;
   const blockedScope = result?.kind === "blocked" ? result.scope : null;
@@ -42,20 +42,83 @@ export default function HomePage() {
   const costResult = successfulScope?.issues
     ? calculateRequirementCost(successfulScope.issues, assigneeDirectory)
     : null;
-  const profitability = costResult
-    ? calculateRequirementProfitability(budgetState.totalBudget, costResult.totalCost)
-    : null;
+  const profitability = useMemo(() => {
+    if (!costResult) {
+      return null;
+    }
+
+    const totalBudget = scenarioState
+      ? Object.values(scenarioState.baselineBudgets).reduce((sum, value) => sum + value, 0)
+      : null;
+
+    return calculateRequirementProfitability(totalBudget, costResult.totalCost);
+  }, [costResult, scenarioState]);
   const directionProfitability = costResult
-    ? calculateDirectionProfitability(budgetState.directionBudgets, costResult.directionTotals)
+    ? calculateDirectionProfitability(
+        scenarioState?.baselineBudgets ?? allocateEvenBudgets(0),
+        costResult.directionTotals,
+      )
     : [];
   const missingAssigneeIssueKeys =
     costResult?.ledger
       .filter((row) => row.warning === "MISSING_ASSIGNEE")
       .map((row) => row.issueKey) ?? [];
+  const scenarioDirty = scenarioState ? hasScenarioChanges(scenarioState) : false;
 
   useEffect(() => {
     setAssigneeDirectory(loadAssigneeDirectory());
   }, []);
+
+  function createBaselineBudgets(): DirectionBudgetMap {
+    return scenarioState?.baselineBudgets ?? allocateEvenBudgets(0);
+  }
+
+  function handleResolved(nextResult: RootIssueFormResult) {
+    setResult(nextResult);
+
+    if (nextResult.kind === "success" || nextResult.kind === "blocked") {
+      const baselineBudgets = createBaselineBudgets();
+
+      setScenarioState(
+        createScenarioState({
+          rootIssueKey: nextResult.scope.issueKey,
+          lastSyncedAt: nextResult.scope.syncedAt,
+          baselineBudgets,
+        }),
+      );
+      return;
+    }
+
+    setScenarioState(null);
+  }
+
+  function handleBeforeRefresh() {
+    if (!scenarioDirty) {
+      return true;
+    }
+
+    return window.confirm(
+      "Refresh snapshot: Refreshing from YouTrack will discard all unsaved scenario hours on this screen. Continue?",
+    );
+  }
+
+  function handleScenarioBudgetChange(nextState: { directionBudgets: DirectionBudgetMap }) {
+    setScenarioState((current) => {
+      if (!current) {
+        return current;
+      }
+
+      return (Object.keys(nextState.directionBudgets) as (keyof DirectionBudgetMap)[]).reduce(
+        (state, role) => updateScenarioBudget(state, role, nextState.directionBudgets[role]),
+        current,
+      );
+    });
+  }
+
+  const baselineTotalBudget = scenarioState
+    ? Object.values(scenarioState.baselineBudgets).reduce((sum, value) => sum + value, 0)
+    : null;
+  const activeDirectionBudgets = scenarioState?.scenarioBudgets ?? allocateEvenBudgets(0);
 
   return (
     <main
@@ -109,7 +172,11 @@ export default function HomePage() {
             Refresh the full requirement snapshot from YouTrack and confirm whether the
             current tree is trustworthy for downstream calculations.
           </p>
-          <RootIssueForm onResolved={setResult} lastSyncedAt={lastSyncedAt} />
+          <RootIssueForm
+            onResolved={handleResolved}
+            lastSyncedAt={lastSyncedAt}
+            onBeforeSubmit={handleBeforeRefresh}
+          />
         </div>
 
         <div
@@ -131,9 +198,10 @@ export default function HomePage() {
 
         {successfulScope ? (
           <BudgetAllocationForm
-            totalBudget={budgetState.totalBudget}
-            directionBudgets={budgetState.directionBudgets}
-            onChange={setBudgetState}
+            baselineTotalBudget={baselineTotalBudget}
+            baselineDirectionBudgets={scenarioState?.baselineBudgets ?? allocateEvenBudgets(0)}
+            scenarioDirectionBudgets={activeDirectionBudgets}
+            onChange={handleScenarioBudgetChange}
           />
         ) : null}
 
