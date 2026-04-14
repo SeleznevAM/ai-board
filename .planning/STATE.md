@@ -85,7 +85,7 @@ Recent decisions affecting current work:
 
 ### Pending Todos
 
-None yet.
+- [Fix assignee rate resolution](/Users/alexanderseleznev/Documents/PetProjects/board_ai/.planning/todos/pending/2026-04-14-fix-assignee-rate-resolution.md): fix incorrect fallback to `unmapped` when an assignee already exists in the internal directory with a role and rate.
 
 ### Blockers/Concerns
 
