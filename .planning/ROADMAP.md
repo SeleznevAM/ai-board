@@ -72,7 +72,11 @@ Plans:
   2. Пользователь может добавить дополнительные часы по одному или нескольким направлениям и сразу увидеть прогнозные затраты и прогнозную рентабельность рядом с фактическими значениями.
   3. Система хранит исходные импортированные данные YouTrack отдельно от пользовательских бюджетов и дополнительных часов, так что происхождение расчета можно объяснить.
   4. Для каждого расчета сохраняются метаданные о root issue, времени обновления YouTrack и использованных бюджетах и дополнительных часах.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [ ] 04-01-PLAN.md - Freeze the pure scenario overlay contracts, provenance model, and forecast math with regression coverage.
+- [ ] 04-02-PLAN.md - Wire page-level scenario state, refresh discard confirmation, baseline-vs-scenario budgets, and task-card extra-hours editing.
+- [ ] 04-03-PLAN.md - Present current-vs-forecast metrics and in-memory provenance while keeping blocked snapshot trust boundaries intact.
 **UI hint**: yes
 
 ### Phase 5: PM Dashboard
