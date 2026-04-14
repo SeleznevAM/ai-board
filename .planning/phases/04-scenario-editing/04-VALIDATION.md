@@ -38,15 +38,13 @@ created: 2026-04-14
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 04-01-01 | 01 | 1 | AUDT-01 | unit | `npm test` | ❌ W0 | ⬜ pending |
-| 04-01-02 | 01 | 1 | AUDT-02 | unit | `npm test` | ❌ W0 | ⬜ pending |
-| 04-02-01 | 02 | 2 | REFO-01 | unit | `npm test` | ❌ W0 | ⬜ pending |
-| 04-02-02 | 02 | 2 | REFO-02 | unit | `npm test` | ❌ W0 | ⬜ pending |
-| 04-02-03 | 02 | 2 | REFO-04 | unit | `npm test` | ❌ W0 | ⬜ pending |
-| 04-03-01 | 03 | 3 | BUDG-01 | component | `npm test` | ✅ | ⬜ pending |
-| 04-03-02 | 03 | 3 | REFO-03 | component | `npm run build` | ✅ | ⬜ pending |
-| 04-03-03 | 03 | 3 | BUDG-02 | component | `npm run build` | ✅ | ⬜ pending |
-| 04-03-04 | 03 | 3 | BUDG-03 | component | `npm run build` | ✅ | ⬜ pending |
+| 04-01-01 | 01 | 1 | BUDG-03 | unit | `npx vitest run src/lib/scenario/state.test.ts src/lib/scenario/forecast.test.ts` | ❌ W0 | ⬜ pending |
+| 04-01-02 | 01 | 1 | AUDT-01 | unit | `npx vitest run src/lib/scenario/state.test.ts` | ❌ W0 | ⬜ pending |
+| 04-01-03 | 01 | 1 | REFO-02 | unit | `npx vitest run src/lib/scenario/forecast.test.ts` | ❌ W0 | ⬜ pending |
+| 04-02-01 | 02 | 2 | BUDG-01 | component | `npm test` | ✅ | ⬜ pending |
+| 04-02-02 | 02 | 2 | REFO-01 | component | `npm run build` | ✅ | ⬜ pending |
+| 04-03-01 | 03 | 3 | REFO-03 | component | `npm run build` | ✅ | ⬜ pending |
+| 04-03-02 | 03 | 3 | AUDT-02 | component | `npm test` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
