@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: YouTrack Data Contract** - Пользователь вводит root issue и видит, какую поддерживаемую иерархию система реально возьмет в расчет.
 - [x] **Phase 2: Ingestion Correctness** - Система надежно синхронизирует задачи и worklog-данные из YouTrack и явно показывает полноту расчета.
 - [x] **Phase 3: Cost Engine** - Импортированные трудозатраты превращаются в себестоимость и базовую рентабельность по требованию и направлениям.
-- [ ] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
+- [x] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
 - [ ] **Phase 5: PM Dashboard** - Пользователь получает быстрый экран принятия решения с итогами, цветовой индикацией и вкладом направлений.
 
 ## Phase Details
@@ -76,7 +76,7 @@ Plans:
 Plans:
 - [x] 04-01-PLAN.md - Freeze the pure scenario overlay contracts, provenance model, and forecast math with regression coverage.
 - [x] 04-02-PLAN.md - Wire page-level scenario state, refresh discard confirmation, baseline-vs-scenario budgets, and task-card extra-hours editing.
-- [ ] 04-03-PLAN.md - Present current-vs-forecast metrics and in-memory provenance while keeping blocked snapshot trust boundaries intact.
+- [x] 04-03-PLAN.md - Present current-vs-forecast metrics and in-memory provenance while keeping blocked snapshot trust boundaries intact.
 **UI hint**: yes
 
 ### Phase 5: PM Dashboard
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. YouTrack Data Contract | 3/3 | Complete | 2026-04-07 |
 | 2. Ingestion Correctness | 3/3 | Complete | 2026-04-08 |
 | 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
-| 4. Scenario Editing | 2/3 | In Progress | - |
+| 4. Scenario Editing | 3/3 | Complete | 2026-04-14 |
 | 5. PM Dashboard | 0/TBD | Not started | - |
