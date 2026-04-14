@@ -41,7 +41,7 @@ const stateCopy = {
   SNAPSHOT_BLOCKED: {
     title: "Snapshot is blocked",
     body:
-      "Some issues require estimate values before the refreshed snapshot can be trusted.",
+      "Some issues require estimate values before the refreshed snapshot can be trusted, so scenario totals stay hidden until the snapshot is trustworthy.",
     tone: "#a63b3b",
   },
   UNKNOWN_ERROR: {

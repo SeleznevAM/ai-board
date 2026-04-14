@@ -7,6 +7,7 @@ import { BudgetAllocationForm } from "../src/components/budget-allocation-form";
 import { CostSummary } from "../src/components/cost-summary";
 import { DirectionBreakdown } from "../src/components/direction-breakdown";
 import { RootIssueForm, type RootIssueFormResult } from "../src/components/root-issue-form";
+import { ScenarioOriginPanel } from "../src/components/scenario-origin-panel";
 import { ScopeState } from "../src/components/scope-state";
 import { ScopeTree } from "../src/components/scope-tree";
 import { allocateEvenBudgets } from "../src/lib/costing/budgetAllocation";
@@ -176,6 +177,8 @@ export default function HomePage() {
       },
     ]),
   );
+  const hasTrustworthySnapshot =
+    successfulScope !== null && costResult !== null && profitability !== null;
 
   return (
     <main
@@ -277,7 +280,7 @@ export default function HomePage() {
           </div>
         ) : null}
 
-        {costResult && profitability ? (
+        {hasTrustworthySnapshot && scenarioState ? (
           <>
             <CostSummary
               totalHours={{
@@ -294,6 +297,7 @@ export default function HomePage() {
               }}
               hasScenarioChanges={scenarioDirty}
             />
+            <ScenarioOriginPanel origin={scenarioState} hasScenarioChanges={scenarioDirty} />
             <DirectionBreakdown
               directionTotals={{
                 current: costResult.directionTotals,
