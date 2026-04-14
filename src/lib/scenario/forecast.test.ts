@@ -213,7 +213,7 @@ describe("calculateScenarioForecast", () => {
     expect(result.summary.current.cost.totalCost).toBe(baseline.currentCost.totalCost);
     expect(result.summary.current.profitability).toEqual(baseline.currentProfitability);
     expect(result.summary.forecast.cost.totalCost).toBe(4800);
-    expect(result.summary.forecast.profitability.marginPercent).toBe(73.33);
+    expect(result.summary.forecast.profitability.marginPercent).toBe(74.19);
     expect(issues[0]?.normalizedMinutes).toBe(canonicalMinutes);
   });
 
@@ -290,10 +290,10 @@ describe("calculateScenarioForecast", () => {
     });
 
     expect(result.profitability.forecast).toEqual({
-      budget: 13300,
-      cost: 9600,
-      delta: 3700,
-      marginPercent: 27.82,
+      budget: 13600,
+      cost: 7200,
+      delta: 6400,
+      marginPercent: 47.06,
       neededUpsell: 0,
     });
     expect(

@@ -8,6 +8,7 @@ import type {
   RequirementCostResult,
   RequirementProfitability,
 } from "../costing/types";
+import type { SnapshotIssueNode } from "../ingestion/types";
 
 export type ScenarioExtraHoursMap = Readonly<Record<string, number>>;
 
@@ -62,11 +63,7 @@ export type ScenarioDirectionDelta = {
 };
 
 export type ScenarioForecastInput = {
-  readonly issues: readonly {
-    readonly issueKey: string;
-    readonly normalizedMinutes: number | null;
-    readonly assignee: CostLedgerRow["assignee"];
-  }[];
+  readonly issues: readonly SnapshotIssueNode[];
   readonly directoryEntries: readonly AssigneeDirectoryEntry[];
   readonly current: ScenarioSummary;
   readonly scenario: ScenarioState;
