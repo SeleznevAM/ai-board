@@ -280,13 +280,31 @@ export default function HomePage() {
         {costResult && profitability ? (
           <>
             <CostSummary
-              totalHours={costResult.totalHours}
-              totalCost={costResult.totalCost}
-              profitability={profitability}
+              totalHours={{
+                current: costResult.totalHours,
+                forecast: scenarioForecast?.summary.forecast.cost.totalHours ?? costResult.totalHours,
+              }}
+              totalCost={{
+                current: costResult.totalCost,
+                forecast: scenarioForecast?.totalCost.forecast ?? costResult.totalCost,
+              }}
+              profitability={{
+                current: profitability,
+                forecast: scenarioForecast?.profitability.forecast ?? profitability,
+              }}
+              hasScenarioChanges={scenarioDirty}
             />
             <DirectionBreakdown
-              directionTotals={costResult.directionTotals}
-              profitability={directionProfitability}
+              directionTotals={{
+                current: costResult.directionTotals,
+                forecast: scenarioForecast?.directionTotals.forecast ?? costResult.directionTotals,
+              }}
+              profitability={{
+                current: directionProfitability,
+                forecast:
+                  scenarioForecast?.directionProfitability.forecast ?? directionProfitability,
+              }}
+              directionDeltas={scenarioForecast?.directionDeltas ?? []}
             />
           </>
         ) : null}
