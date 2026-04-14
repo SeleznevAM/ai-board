@@ -74,8 +74,8 @@ Plans:
   4. Для каждого расчета сохраняются метаданные о root issue, времени обновления YouTrack и использованных бюджетах и дополнительных часах.
 **Plans**: 3 plans
 Plans:
-- [ ] 04-01-PLAN.md - Freeze the pure scenario overlay contracts, provenance model, and forecast math with regression coverage.
-- [ ] 04-02-PLAN.md - Wire page-level scenario state, refresh discard confirmation, baseline-vs-scenario budgets, and task-card extra-hours editing.
+- [x] 04-01-PLAN.md - Freeze the pure scenario overlay contracts, provenance model, and forecast math with regression coverage.
+- [x] 04-02-PLAN.md - Wire page-level scenario state, refresh discard confirmation, baseline-vs-scenario budgets, and task-card extra-hours editing.
 - [ ] 04-03-PLAN.md - Present current-vs-forecast metrics and in-memory provenance while keeping blocked snapshot trust boundaries intact.
 **UI hint**: yes
 
@@ -101,5 +101,5 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. YouTrack Data Contract | 3/3 | Complete | 2026-04-07 |
 | 2. Ingestion Correctness | 3/3 | Complete | 2026-04-08 |
 | 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
-| 4. Scenario Editing | 0/TBD | Not started | - |
+| 4. Scenario Editing | 2/3 | In Progress | - |
 | 5. PM Dashboard | 0/TBD | Not started | - |

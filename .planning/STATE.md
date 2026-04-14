@@ -2,16 +2,16 @@
 gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
-status: planning
-stopped_at: Completed 03-cost-engine-03-03-PLAN.md
-last_updated: "2026-04-08T18:19:21Z"
-last_activity: 2026-04-08 -- Phase 03 completed
+status: executing
+stopped_at: Completed 04-02-PLAN.md
+last_updated: "2026-04-14T18:57:15.122Z"
+last_activity: 2026-04-14
 progress:
   total_phases: 5
   completed_phases: 3
-  total_plans: 9
-  completed_plans: 9
-  percent: 60
+  total_plans: 12
+  completed_plans: 11
+  percent: 92
 ---
 
 # Project State
@@ -25,12 +25,12 @@ See: .planning/PROJECT.md (updated 2026-04-05)
 
 ## Current Position
 
-Phase: 04 (scenario-editing) — READY TO PLAN
-Plan: 0 of TBD
-Status: Phase 03 complete, Phase 04 pending planning
-Last activity: 2026-04-08 -- Phase 03 completed
+Phase: 04 (scenario-editing) — EXECUTING
+Plan: 3 of 3
+Status: Ready to execute
+Last activity: 2026-04-14
 
-Progress: [██████░░░░] 60%
+Progress: [█████████░] 92%
 
 ## Performance Metrics
 
@@ -63,6 +63,8 @@ Progress: [██████░░░░] 60%
 | Phase 03 P01 | 20 min | 2 tasks | 10 files |
 | Phase 03 P02 | 20 min | 3 tasks | 7 files |
 | Phase 03 P03 | 20 min | 2 tasks | 8 files |
+| Phase 04 P01 | 3 | 3 tasks | 5 files |
+| Phase 04 P02 | 6min | 2 tasks | 4 files |
 
 ## Accumulated Context
 
@@ -84,6 +86,10 @@ Recent decisions affecting current work:
 - [Phase 03-cost-engine]: Missing-assignee and unmapped spend remain visible in totals and tree warnings instead of being hidden or zeroed out.
 - [Phase 04-scenario-editing]: Scenario hours are added at the task card level, priced by the task's assigned performer, and stay separate from the canonical YouTrack snapshot.
 - [Phase 04-scenario-editing]: Scenario state is local to the current screen and must trigger a confirmation before a refresh would discard pending scenario hours.
+- [Phase 04]: Scenario state snapshots baseline budgets separately from editable scenario budgets to preserve the audit boundary.
+- [Phase 04]: Forecast math reuses existing costing and profitability helpers over augmented issue minutes instead of duplicating formulas.
+- [Phase 04]: The page now owns canonical refresh results and a separate in-memory scenario overlay so reloads discard scenario edits automatically.
+- [Phase 04]: Dirty refresh confirmation is only evaluated on form submit, which avoids warning during ordinary typing or task-card edits.
 
 ### Pending Todos
 
@@ -95,6 +101,6 @@ Recent decisions affecting current work:
 
 ## Session Continuity
 
-Last session: 2026-04-08T18:19:21Z
-Stopped at: Completed 03-cost-engine-03-03-PLAN.md
+Last session: 2026-04-14T18:57:15.118Z
+Stopped at: Completed 04-02-PLAN.md
 Resume file: None
