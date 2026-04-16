@@ -88,7 +88,10 @@ Plans:
   2. Пользователь видит таблицу по направлениям с бюджетом, фактическими часами, дополнительными часами, затратами и рентабельностью для каждого направления.
   3. Рентабельность подсвечивается красным ниже 20% и зеленым при 20% и выше как на общем итоге, так и на разбивке по направлениям.
   4. Пользователь может быстро понять, какие направления дают перерасход и какой вклад они вносят в итоговую рентабельность требования.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 05-01-PLAN.md - Create reusable dashboard presentation primitives: threshold status helper, two-tab shell, and compact requirement decision card.
+- [ ] 05-02-PLAN.md - Recompose the page around the new shell and move direction diagnostics into a dense desktop directions tab.
 **UI hint**: yes
 
 ## Progress
