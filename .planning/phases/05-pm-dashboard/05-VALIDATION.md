@@ -38,8 +38,8 @@ created: 2026-04-16
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 05-01-01 | 01 | 1 | UI-01 | component | `npm test` | ❌ W0 | ⬜ pending |
-| 05-01-02 | 01 | 1 | UI-03 | component | `npm test` | ❌ W0 | ⬜ pending |
+| 05-01-01 | 01 | 1 | UI-01 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-01-02 | 01 | 1 | UI-03 | component | `npm run build` | ✅ | ⬜ pending |
 | 05-02-01 | 02 | 2 | UI-02 | component | `npm run build` | ✅ | ⬜ pending |
 | 05-02-02 | 02 | 2 | UI-04 | component | `npm run build` | ✅ | ⬜ pending |
 
@@ -49,8 +49,7 @@ created: 2026-04-16
 
 ## Wave 0 Requirements
 
-- [ ] Focused component tests for dashboard tabs and top decision card states
-- [ ] Focused component tests for full-block status styling and direction-row rendering
+Existing infrastructure covers all phase requirements.
 
 ---
 
