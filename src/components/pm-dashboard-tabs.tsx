@@ -75,11 +75,17 @@ export function PmDashboardTabs({
       <div
         role="tablist"
         aria-label="Dashboard sections"
+        aria-orientation="horizontal"
         style={{
           display: "flex",
           gap: "12px",
           alignItems: "center",
           flexWrap: "wrap",
+          padding: "6px",
+          width: "fit-content",
+          borderRadius: "999px",
+          border: "1px solid rgba(75, 49, 11, 0.12)",
+          background: "rgba(255, 252, 247, 0.9)",
         }}
       >
         <button
@@ -115,6 +121,9 @@ export function PmDashboardTabs({
         role="tabpanel"
         aria-labelledby="pm-dashboard-tab-overview"
         hidden={selectedTab !== "overview"}
+        style={{
+          paddingTop: "4px",
+        }}
       >
         {overviewContent}
       </div>
@@ -123,6 +132,9 @@ export function PmDashboardTabs({
         role="tabpanel"
         aria-labelledby="pm-dashboard-tab-directions"
         hidden={selectedTab !== "directions"}
+        style={{
+          paddingTop: "4px",
+        }}
       >
         {directionsContent}
       </div>

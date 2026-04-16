@@ -55,3 +55,13 @@ export function getDashboardStatusPresentation(
     mutedColor: "#6e5430",
   };
 }
+
+export function getDashboardStatusBlockStyle(marginPercent: number | null) {
+  const presentation = getDashboardStatusPresentation(marginPercent);
+
+  return {
+    borderColor: presentation.borderColor,
+    background: presentation.background,
+    color: presentation.textColor,
+  } as const;
+}

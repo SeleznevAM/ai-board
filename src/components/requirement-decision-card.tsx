@@ -2,7 +2,10 @@ import React, { type ReactNode } from "react";
 
 import type { RequirementProfitability } from "../lib/costing/types";
 import type { ScenarioComparison } from "../lib/scenario/types";
-import { getDashboardStatusPresentation } from "./dashboard-status";
+import {
+  getDashboardStatusBlockStyle,
+  getDashboardStatusPresentation,
+} from "./dashboard-status";
 
 type RequirementDecisionCardProps = {
   readonly totalHours: ScenarioComparison<number>;
@@ -178,9 +181,7 @@ export function RequirementDecisionCard({
           data-status={marginStatus.tone}
           style={{
             ...blockBaseStyle(),
-            borderColor: marginStatus.borderColor,
-            background: marginStatus.background,
-            color: marginStatus.textColor,
+            ...getDashboardStatusBlockStyle(profitability.current.marginPercent),
           }}
         >
           <div style={{ display: "grid", gap: "6px" }}>
