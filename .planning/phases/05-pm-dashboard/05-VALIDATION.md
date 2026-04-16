@@ -1,8 +1,8 @@
 ---
 phase: 5
 slug: 05-pm-dashboard
-status: draft
-nyquist_compliant: false
+status: ready
+nyquist_compliant: true
 wave_0_complete: false
 created: 2026-04-16
 ---
@@ -19,7 +19,7 @@ created: 2026-04-16
 |----------|-------|
 | **Framework** | vitest |
 | **Config file** | `vitest.config.ts` |
-| **Quick run command** | `npx vitest run src/lib/costing/calculateProfitability.test.ts src/lib/scenario/forecast.test.ts` |
+| **Quick run command** | `npx vitest run src/components/pm-dashboard-status.test.tsx src/components/pm-dashboard-tabs.test.tsx src/components/requirement-decision-card.test.tsx src/components/direction-breakdown-table.test.tsx` |
 | **Full suite command** | `npm test` |
 | **Estimated runtime** | ~20 seconds |
 
@@ -27,7 +27,7 @@ created: 2026-04-16
 
 ## Sampling Rate
 
-- **After every task commit:** Run `npx vitest run src/lib/costing/calculateProfitability.test.ts src/lib/scenario/forecast.test.ts`
+- **After every task commit:** Run the targeted component tests for the touched Phase 05 surface, plus existing domain tests if forecast math changed
 - **After every plan wave:** Run `npm test`
 - **Before `$gsd-verify-work`:** Full suite must be green
 - **Max feedback latency:** 30 seconds
@@ -38,10 +38,11 @@ created: 2026-04-16
 
 | Task ID | Plan | Wave | Requirement | Test Type | Automated Command | File Exists | Status |
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
-| 05-01-01 | 01 | 1 | UI-01 | component | `npm run build` | ✅ | ⬜ pending |
-| 05-01-02 | 01 | 1 | UI-03 | component | `npm run build` | ✅ | ⬜ pending |
-| 05-02-01 | 02 | 2 | UI-01 | component | `npm run build` | ✅ | ⬜ pending |
-| 05-02-02 | 02 | 2 | UI-02, UI-03, UI-04 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-01-01 | 01 | 1 | UI-01, UI-03 | component | `npx vitest run src/components/pm-dashboard-status.test.tsx src/components/pm-dashboard-tabs.test.tsx src/components/requirement-decision-card.test.tsx` | ✅ | ⬜ pending |
+| 05-01-02 | 01 | 1 | UI-03 | component | `npx vitest run src/components/pm-dashboard-status.test.tsx src/components/pm-dashboard-tabs.test.tsx` | ✅ | ⬜ pending |
+| 05-01-03 | 01 | 1 | UI-01, UI-03 | component | `npx vitest run src/components/requirement-decision-card.test.tsx && npm run build` | ✅ | ⬜ pending |
+| 05-02-01 | 02 | 2 | UI-01, UI-04 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-02-02 | 02 | 2 | UI-02, UI-03, UI-04 | component | `npx vitest run src/components/direction-breakdown-table.test.tsx && npm run build` | ✅ | ⬜ pending |
 | 05-02-03 | 02 | 2 | UI-01, UI-02, UI-03, UI-04 | manual | `npm run build` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
@@ -50,12 +51,12 @@ created: 2026-04-16
 
 ## Wave 0 Requirements
 
-- [ ] `src/components/requirement-decision-card.test.tsx` — covers UI-01
-- [ ] `src/components/direction-breakdown-table.test.tsx` — covers UI-02 and part of UI-04
-- [ ] `src/components/pm-dashboard-tabs.test.tsx` — covers tab switching, selected state, and panel visibility
-- [ ] `src/components/pm-dashboard-status.test.tsx` — covers UI-03 status semantics
-- [ ] `vitest.config.ts` or per-file docblocks — switch UI tests to `jsdom` instead of the current `node` environment
-- [ ] Install test helpers: `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `jsdom`
+- [ ] `src/components/requirement-decision-card.test.tsx` — delivered by `05-01-01`, protects UI-01 compact-card contract and subordinate `neededUpsell`
+- [ ] `src/components/direction-breakdown-table.test.tsx` — delivered by `05-02-02`, covers UI-02 and part of UI-04
+- [ ] `src/components/pm-dashboard-tabs.test.tsx` — delivered by `05-01-01`, covers tab switching, selected state, and panel visibility
+- [ ] `src/components/pm-dashboard-status.test.tsx` — delivered by `05-01-01`, covers UI-03 status semantics
+- [ ] `vitest.config.ts` or per-file docblocks — delivered by `05-01-01`, switches UI tests to `jsdom`
+- [ ] Install test helpers: `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `jsdom` — delivered by `05-01-01`
 
 ---
 
@@ -71,11 +72,11 @@ created: 2026-04-16
 
 ## Validation Sign-Off
 
-- [ ] All tasks have `<automated>` verify or Wave 0 dependencies
+- [x] All tasks have `<automated>` verify or explicit Wave 0 implementation tasks
 - [ ] Sampling continuity: no 3 consecutive tasks without automated verify
-- [ ] Wave 0 covers all MISSING references
+- [x] Wave 0 work is represented directly inside executable plans
 - [ ] No watch-mode flags
 - [ ] Feedback latency < 30s
-- [ ] `nyquist_compliant: true` set in frontmatter
+- [x] `nyquist_compliant: true` set in frontmatter
 
 **Approval:** pending
