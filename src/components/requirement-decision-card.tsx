@@ -91,6 +91,7 @@ export function RequirementDecisionCard({
 
   return (
     <section
+      data-scenario-state={hasScenarioChanges ? "changed" : "baseline"}
       style={{
         display: "grid",
         gap: "16px",
@@ -113,6 +114,11 @@ export function RequirementDecisionCard({
           Requirement decision card
         </p>
         <h2 style={{ margin: 0, fontSize: "1.75rem" }}>Итог по требованию</h2>
+        <p style={{ margin: 0, color: "#6e5430", lineHeight: 1.5 }}>
+          {hasScenarioChanges
+            ? "Сценарные значения показаны вторым слоем внутри карточки."
+            : "Карточка показывает базовый снимок без сценарных добавок."}
+        </p>
       </header>
 
       <div

@@ -67,12 +67,20 @@ describe("RequirementDecisionCard", () => {
     });
 
     const blocks = collectElements(tree, (element) => typeof element.props["data-block"] === "string");
+    const scenarioSlots = collectElements(
+      tree,
+      (element) => typeof element.props["data-slot"] === "string",
+    );
 
     expect(blocks.map((element) => element.props["data-block"])).toEqual([
       "budget",
       "labor",
       "margin",
     ]);
+    expect((tree as ReactElement<Record<string, unknown>>).props["data-scenario-state"]).toBe(
+      "baseline",
+    );
+    expect(scenarioSlots.map((element) => element.props["data-slot"])).toEqual(["needed-upsell"]);
     expect(collectText(tree)).toContain("До 20% не хватает:");
   });
 
@@ -108,6 +116,9 @@ describe("RequirementDecisionCard", () => {
       "needed-upsell",
       "scenario-margin",
     ]);
+    expect((tree as ReactElement<Record<string, unknown>>).props["data-scenario-state"]).toBe(
+      "changed",
+    );
     expect(collectText(tree)).toContain("Сценарный бюджет");
     expect(collectText(tree)).toContain("Сценарные трудозатраты");
     expect(collectText(tree)).toContain("Сценарная рентабельность");
