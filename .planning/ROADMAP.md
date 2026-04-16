@@ -90,7 +90,7 @@ Plans:
   4. Пользователь может быстро понять, какие направления дают перерасход и какой вклад они вносят в итоговую рентабельность требования.
 **Plans**: 2 plans
 Plans:
-- [ ] 05-01-PLAN.md - Create reusable dashboard presentation primitives: threshold status helper, two-tab shell, and compact requirement decision card.
+- [x] 05-01-PLAN.md - Create reusable dashboard presentation primitives: threshold status helper, two-tab shell, and compact requirement decision card.
 - [ ] 05-02-PLAN.md - Recompose the page around the new shell and move direction diagnostics into a dense desktop directions tab.
 **UI hint**: yes
 
@@ -105,4 +105,4 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 2. Ingestion Correctness | 3/3 | Complete | 2026-04-08 |
 | 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
 | 4. Scenario Editing | 3/3 | Complete | 2026-04-14 |
-| 5. PM Dashboard | 0/TBD | Not started | - |
+| 5. PM Dashboard | 1/2 | In progress | - |

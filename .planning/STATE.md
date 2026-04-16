@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Completed 04-03-PLAN.md
-last_updated: "2026-04-16T18:48:09.704Z"
+stopped_at: Awaiting human verify for 05-02-PLAN.md
+last_updated: "2026-04-16T18:55:41Z"
 last_activity: 2026-04-16
 progress:
   total_phases: 5
   completed_phases: 4
   total_plans: 14
   completed_plans: 13
-  percent: 100
+  percent: 93
 ---
 
 # Project State
@@ -27,10 +27,10 @@ See: .planning/PROJECT.md (updated 2026-04-05)
 
 Phase: 05 (pm-dashboard) — EXECUTING
 Plan: 2 of 2
-Status: Ready to execute
+Status: Awaiting human verify
 Last activity: 2026-04-16
 
-Progress: [██████████] 100%
+Progress: [█████████░] 93%
 
 ## Performance Metrics
 
@@ -95,6 +95,9 @@ Recent decisions affecting current work:
 - [Phase 04]: Dirty refresh confirmation is only evaluated on form submit, which avoids warning during ordinary typing or task-card edits.
 - [Phase 04]: Scenario provenance stays minimal and in-memory, and only renders when the underlying snapshot is successful and trustworthy.
 - [Phase 04]: Current and forecast totals remain visible side by side in the same cards instead of switching the workspace into a forecast-only mode.
+- [Phase 05]: The PM dashboard shell is presentation-only; `app/page.tsx` still owns snapshot, scenario, costing, and forecast state.
+- [Phase 05]: Direction rows use forecast semantics only when extra scenario hours exist, otherwise they preserve current-state profitability semantics.
+- [Phase 05]: The direction contribution cue uses delta versus budget because that field is present in the shared per-direction profitability contract.
 
 ### Pending Todos
 
@@ -103,9 +106,10 @@ Recent decisions affecting current work:
 ### Blockers/Concerns
 
 - Need phase-4 decisions for scenario persistence and provenance once user-edited budgets and extra hours become first-class artifacts.
+- Blocking checkpoint open: desktop human verification for 05-02 must confirm overview-first hierarchy and directions-tab scanability before the plan can be marked complete.
 
 ## Session Continuity
 
 Last session: 2026-04-14T19:04:29.252Z
-Stopped at: Completed 04-03-PLAN.md
+Stopped at: Awaiting human verify for 05-02-PLAN.md
 Resume file: None
