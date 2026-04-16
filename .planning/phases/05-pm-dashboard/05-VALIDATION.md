@@ -19,16 +19,16 @@ created: 2026-04-16
 |----------|-------|
 | **Framework** | vitest |
 | **Config file** | `vitest.config.ts` |
-| **Quick run command** | `npm test` |
-| **Full suite command** | `npm test && npm run build` |
+| **Quick run command** | `npx vitest run src/lib/costing/calculateProfitability.test.ts src/lib/scenario/forecast.test.ts` |
+| **Full suite command** | `npm test` |
 | **Estimated runtime** | ~20 seconds |
 
 ---
 
 ## Sampling Rate
 
-- **After every task commit:** Run `npm test`
-- **After every plan wave:** Run `npm test && npm run build`
+- **After every task commit:** Run `npx vitest run src/lib/costing/calculateProfitability.test.ts src/lib/scenario/forecast.test.ts`
+- **After every plan wave:** Run `npm test`
 - **Before `$gsd-verify-work`:** Full suite must be green
 - **Max feedback latency:** 30 seconds
 
@@ -40,8 +40,9 @@ created: 2026-04-16
 |---------|------|------|-------------|-----------|-------------------|-------------|--------|
 | 05-01-01 | 01 | 1 | UI-01 | component | `npm run build` | ✅ | ⬜ pending |
 | 05-01-02 | 01 | 1 | UI-03 | component | `npm run build` | ✅ | ⬜ pending |
-| 05-02-01 | 02 | 2 | UI-02 | component | `npm run build` | ✅ | ⬜ pending |
-| 05-02-02 | 02 | 2 | UI-04 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-02-01 | 02 | 2 | UI-01 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-02-02 | 02 | 2 | UI-02, UI-03, UI-04 | component | `npm run build` | ✅ | ⬜ pending |
+| 05-02-03 | 02 | 2 | UI-01, UI-02, UI-03, UI-04 | manual | `npm run build` | ✅ | ⬜ pending |
 
 *Status: ⬜ pending · ✅ green · ❌ red · ⚠️ flaky*
 
@@ -49,7 +50,12 @@ created: 2026-04-16
 
 ## Wave 0 Requirements
 
-Existing infrastructure covers all phase requirements.
+- [ ] `src/components/requirement-decision-card.test.tsx` — covers UI-01
+- [ ] `src/components/direction-breakdown-table.test.tsx` — covers UI-02 and part of UI-04
+- [ ] `src/components/pm-dashboard-tabs.test.tsx` — covers tab switching, selected state, and panel visibility
+- [ ] `src/components/pm-dashboard-status.test.tsx` — covers UI-03 status semantics
+- [ ] `vitest.config.ts` or per-file docblocks — switch UI tests to `jsdom` instead of the current `node` environment
+- [ ] Install test helpers: `@testing-library/react`, `@testing-library/dom`, `@testing-library/jest-dom`, `jsdom`
 
 ---
 
