@@ -4,8 +4,12 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { BudgetAllocationForm } from "../src/components/budget-allocation-form";
-import { CostSummary } from "../src/components/cost-summary";
 import { DirectionBreakdown } from "../src/components/direction-breakdown";
+import {
+  PmDashboardTabs,
+  type PmDashboardTabId,
+} from "../src/components/pm-dashboard-tabs";
+import { RequirementDecisionCard } from "../src/components/requirement-decision-card";
 import { RootIssueForm, type RootIssueFormResult } from "../src/components/root-issue-form";
 import { ScenarioOriginPanel } from "../src/components/scenario-origin-panel";
 import { ScopeState } from "../src/components/scope-state";
@@ -38,6 +42,7 @@ export default function HomePage() {
   const [result, setResult] = useState<RootIssueFormResult | null>(null);
   const [assigneeDirectory, setAssigneeDirectory] = useState<AssigneeDirectoryEntry[]>([]);
   const [scenarioState, setScenarioState] = useState<ScenarioState | null>(null);
+  const [selectedTab, setSelectedTab] = useState<PmDashboardTabId>("overview");
   const youTrackBaseUrl = process.env.NEXT_PUBLIC_YOUTRACK_BASE_URL ?? null;
   const successfulScope = result?.kind === "success" ? result.scope : null;
   const blockedScope = result?.kind === "blocked" ? result.scope : null;
@@ -179,6 +184,57 @@ export default function HomePage() {
   );
   const hasTrustworthySnapshot =
     successfulScope !== null && costResult !== null && profitability !== null;
+  const dashboardShell =
+    hasTrustworthySnapshot && scenarioState ? (
+      <PmDashboardTabs
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        overviewContent={
+          <div style={{ display: "grid", gap: "20px" }}>
+            <RequirementDecisionCard
+              totalHours={{
+                current: costResult.totalHours,
+                forecast: scenarioForecast?.summary.forecast.cost.totalHours ?? costResult.totalHours,
+              }}
+              profitability={{
+                current: profitability,
+                forecast: scenarioForecast?.profitability.forecast ?? profitability,
+              }}
+              hasScenarioChanges={scenarioDirty}
+            />
+            <div
+              style={{
+                display: "grid",
+                gap: "20px",
+                gridTemplateColumns: "minmax(0, 1.6fr) minmax(300px, 0.9fr)",
+                alignItems: "start",
+              }}
+            >
+              <BudgetAllocationForm
+                baselineTotalBudget={baselineTotalBudget}
+                baselineDirectionBudgets={scenarioState.baselineBudgets}
+                scenarioDirectionBudgets={activeDirectionBudgets}
+                onChange={handleScenarioBudgetChange}
+              />
+              <ScenarioOriginPanel origin={scenarioState} hasScenarioChanges={scenarioDirty} />
+            </div>
+          </div>
+        }
+        directionsContent={
+          <DirectionBreakdown
+            directionTotals={{
+              current: costResult.directionTotals,
+              forecast: scenarioForecast?.directionTotals.forecast ?? costResult.directionTotals,
+            }}
+            profitability={{
+              current: directionProfitability,
+              forecast: scenarioForecast?.directionProfitability.forecast ?? directionProfitability,
+            }}
+            directionDeltas={scenarioForecast?.directionDeltas ?? []}
+          />
+        }
+      />
+    ) : null;
 
   return (
     <main
@@ -208,62 +264,68 @@ export default function HomePage() {
               color: "#7a5a22",
             }}
           >
-            Phase 3 cost engine
+            Phase 5 PM dashboard
           </p>
           <h1 style={{ margin: 0, fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-            Requirement profitability workspace
+            Requirement decision dashboard
           </h1>
           <p style={{ maxWidth: "62ch", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
-            Refresh one requirement from YouTrack, map assignees to roles and rates,
-            then see hours, cost, budgets, and profitability in one place.
+            Refresh one requirement from YouTrack, keep the scenario overlay separate from
+            imported facts, and review the PM decision first before drilling into directions.
           </p>
         </header>
 
-        <div
+        <section
           style={{
-            ...panelStyle,
-            padding: "24px",
-            display: "grid",
             gap: "12px",
+            display: "grid",
+            gridTemplateColumns: "minmax(0, 1.6fr) minmax(280px, 0.9fr)",
+            alignItems: "start",
           }}
         >
-          <h2 style={{ margin: 0 }}>Root issue lookup</h2>
-          <p style={{ margin: 0, lineHeight: 1.6 }}>
-            Refresh the full requirement snapshot from YouTrack and confirm whether the
-            current tree is trustworthy for downstream calculations.
-          </p>
-          <RootIssueForm
-            onResolved={handleResolved}
-            lastSyncedAt={lastSyncedAt}
-            onBeforeSubmit={handleBeforeRefresh}
-          />
-        </div>
+          <div
+            style={{
+              ...panelStyle,
+              padding: "24px",
+              display: "grid",
+              gap: "12px",
+            }}
+          >
+            <h2 style={{ margin: 0 }}>Root issue lookup</h2>
+            <p style={{ margin: 0, lineHeight: 1.6 }}>
+              Refresh the requirement snapshot from YouTrack and keep the canonical source
+              of truth ready for the dashboard below.
+            </p>
+            <RootIssueForm
+              onResolved={handleResolved}
+              lastSyncedAt={lastSyncedAt}
+              onBeforeSubmit={handleBeforeRefresh}
+            />
+          </div>
 
-        <div
-          style={{
-            ...panelStyle,
-            padding: "24px",
-            display: "grid",
-            gap: "12px",
-          }}
-        >
-          <h2 style={{ margin: 0 }}>Assignee directory</h2>
-          <p style={{ margin: 0, lineHeight: 1.6 }}>
-            Maintain the assignee to role and rate mapping before trusting direction costs.
-          </p>
-          <Link href="/assignees" style={{ color: "#6f4a16", fontWeight: 700, textDecoration: "none" }}>
-            Open assignee directory
-          </Link>
-        </div>
+          <div
+            style={{
+              ...panelStyle,
+              padding: "24px",
+              display: "grid",
+              gap: "12px",
+            }}
+          >
+            <h2 style={{ margin: 0 }}>Dashboard controls</h2>
+            <p style={{ margin: 0, lineHeight: 1.6 }}>
+              Update assignee rates before trusting direction cost, then switch between the
+              compact overview and dense diagnostic tab.
+            </p>
+            <Link
+              href="/assignees"
+              style={{ color: "#6f4a16", fontWeight: 700, textDecoration: "none" }}
+            >
+              Open assignee directory
+            </Link>
+          </div>
+        </section>
 
-        {successfulScope ? (
-          <BudgetAllocationForm
-            baselineTotalBudget={baselineTotalBudget}
-            baselineDirectionBudgets={scenarioState?.baselineBudgets ?? allocateEvenBudgets(0)}
-            scenarioDirectionBudgets={activeDirectionBudgets}
-            onChange={handleScenarioBudgetChange}
-          />
-        ) : null}
+        {dashboardShell}
 
         {(successfulScope || blockedScope) ? (
           <div style={{ ...panelStyle, padding: "24px" }}>
@@ -278,39 +340,6 @@ export default function HomePage() {
               onClearScenarioExtraHours={successfulScope ? handleClearScenarioExtraHours : undefined}
             />
           </div>
-        ) : null}
-
-        {hasTrustworthySnapshot && scenarioState ? (
-          <>
-            <CostSummary
-              totalHours={{
-                current: costResult.totalHours,
-                forecast: scenarioForecast?.summary.forecast.cost.totalHours ?? costResult.totalHours,
-              }}
-              totalCost={{
-                current: costResult.totalCost,
-                forecast: scenarioForecast?.totalCost.forecast ?? costResult.totalCost,
-              }}
-              profitability={{
-                current: profitability,
-                forecast: scenarioForecast?.profitability.forecast ?? profitability,
-              }}
-              hasScenarioChanges={scenarioDirty}
-            />
-            <ScenarioOriginPanel origin={scenarioState} hasScenarioChanges={scenarioDirty} />
-            <DirectionBreakdown
-              directionTotals={{
-                current: costResult.directionTotals,
-                forecast: scenarioForecast?.directionTotals.forecast ?? costResult.directionTotals,
-              }}
-              profitability={{
-                current: directionProfitability,
-                forecast:
-                  scenarioForecast?.directionProfitability.forecast ?? directionProfitability,
-              }}
-              directionDeltas={scenarioForecast?.directionDeltas ?? []}
-            />
-          </>
         ) : null}
 
         {result?.kind === "blocked" ? (

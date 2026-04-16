@@ -73,8 +73,8 @@ export function ScenarioOriginPanel({
     <section
       style={{
         display: "grid",
-        gap: "16px",
-        padding: "24px",
+        gap: "14px",
+        padding: "20px",
         borderRadius: "24px",
         border: "1px solid rgba(75, 49, 11, 0.18)",
         background: "rgba(255, 250, 242, 0.78)",
@@ -83,7 +83,8 @@ export function ScenarioOriginPanel({
       <div style={{ display: "grid", gap: "8px" }}>
         <h2 style={{ margin: 0 }}>Scenario provenance</h2>
         <p style={{ margin: 0, lineHeight: 1.6 }}>
-          Actual from YouTrack. Forecast from scenario edits on this screen only.
+          Actual values come from the latest YouTrack snapshot. Forecast values come only
+          from edits on this screen.
         </p>
       </div>
 
@@ -103,7 +104,15 @@ export function ScenarioOriginPanel({
             background: "rgba(255, 252, 247, 0.94)",
           }}
         >
-          <div style={{ fontSize: "0.82rem", fontWeight: 700, textTransform: "uppercase" }}>
+          <div
+            style={{
+              fontSize: "0.76rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#6e5430",
+            }}
+          >
             Root issue
           </div>
           <div>{origin.rootIssueKey}</div>
@@ -117,7 +126,15 @@ export function ScenarioOriginPanel({
             background: "rgba(255, 252, 247, 0.94)",
           }}
         >
-          <div style={{ fontSize: "0.82rem", fontWeight: 700, textTransform: "uppercase" }}>
+          <div
+            style={{
+              fontSize: "0.76rem",
+              fontWeight: 700,
+              letterSpacing: "0.12em",
+              textTransform: "uppercase",
+              color: "#6e5430",
+            }}
+          >
             Last sync
           </div>
           <div>{formatTimestamp(origin.lastSyncedAt)}</div>
@@ -138,9 +155,9 @@ export function ScenarioOriginPanel({
       <div
         style={{
           display: "grid",
-          gap: "8px",
-          padding: "16px",
-          borderRadius: "18px",
+          gap: "10px",
+          padding: "14px 16px",
+          borderRadius: "16px",
           border: "1px solid rgba(111, 74, 22, 0.2)",
           background: "rgba(255, 247, 235, 0.96)",
         }}
@@ -154,7 +171,7 @@ export function ScenarioOriginPanel({
             color: "#6f4a16",
           }}
         >
-          Extra hours by issue
+          Issue deltas
         </div>
         {extraHourEntries.length > 0 ? (
           extraHourEntries.map(([issueKey, hours]) => (
@@ -174,7 +191,7 @@ export function ScenarioOriginPanel({
           <p style={{ margin: 0, lineHeight: 1.6 }}>
             {hasScenarioChanges
               ? "No extra hours are stored in the current scenario."
-              : "No extra hours added yet. Current values match the YouTrack snapshot."}
+              : "No issue-level extra hours yet. Forecast currently matches the snapshot."}
           </p>
         )}
       </div>
