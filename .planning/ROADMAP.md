@@ -106,3 +106,14 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
 | 4. Scenario Editing | 3/3 | Complete | 2026-04-14 |
 | 5. PM Dashboard | 1/2 | In progress | - |
+
+## Backlog
+
+### Phase 999.1: Вынести целевую рентабельность в конфигурацию (BACKLOG)
+
+**Goal:** [Captured for future planning]
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with $gsd-review-backlog when ready)
