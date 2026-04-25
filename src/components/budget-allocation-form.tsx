@@ -78,7 +78,7 @@ export function BudgetAllocationForm({
   }
 
   const scenarioTotalBudget = recalculateTotalBudget(scenarioDirectionBudgets);
-  const baselineTotalLabel = baselineTotalBudget === null ? "Not set" : baselineTotalBudget.toFixed(2);
+  const baselineTotalLabel = baselineTotalBudget === null ? "Не задан" : baselineTotalBudget.toFixed(2);
   const scenarioTotalLabel = scenarioTotalBudget.toFixed(2);
 
   return (
@@ -92,7 +92,7 @@ export function BudgetAllocationForm({
         background: "rgba(255, 250, 242, 0.78)",
       }}
     >
-      <h2 style={{ margin: 0 }}>Budget allocation</h2>
+      <h2 style={{ margin: 0 }}>Распределение бюджета</h2>
       <div
         style={{
           display: "grid",
@@ -105,15 +105,15 @@ export function BudgetAllocationForm({
       >
         <div style={{ display: "grid", gap: "4px" }}>
           <span style={{ fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.04em" }}>
-            Agreed baseline from latest refresh
+            Бюджет в расчете
           </span>
-          <span>Current baseline total: {baselineTotalLabel}</span>
+          <span>Текущее значение: {scenarioTotalLabel}</span>
         </div>
         <div style={{ display: "grid", gap: "4px" }}>
           <span style={{ fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.04em" }}>
-            Scenario budget on this screen
+            Значение при последнем обновлении
           </span>
-          <span>Scenario total: {scenarioTotalLabel}</span>
+          <span>Исходное значение: {baselineTotalLabel}</span>
         </div>
         <div
           style={{
@@ -133,17 +133,17 @@ export function BudgetAllocationForm({
             >
               <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{direction}</div>
               <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
-                Baseline {baselineDirectionBudgets[direction].toFixed(2)}
+                Было {baselineDirectionBudgets[direction].toFixed(2)}
               </div>
               <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
-                Scenario {scenarioDirectionBudgets[direction].toFixed(2)}
+                Сейчас {scenarioDirectionBudgets[direction].toFixed(2)}
               </div>
             </div>
           ))}
         </div>
       </div>
       <label style={{ display: "grid", gap: "6px" }}>
-        Scenario total budget
+        Бюджет
         <input
           value={totalBudgetInput}
           onChange={(event) => handleTotalBudgetChange(event.target.value)}
@@ -172,7 +172,7 @@ export function BudgetAllocationForm({
             cursor: "pointer",
           }}
         >
-          {isEditorOpen ? "Hide direction budgets" : "Edit direction budgets"}
+          {isEditorOpen ? "Скрыть бюджеты направлений" : "Изменить бюджеты направлений"}
         </button>
       </div>
 
@@ -220,7 +220,7 @@ export function BudgetAllocationForm({
               cursor: "pointer",
             }}
           >
-            Save direction budgets
+            Сохранить бюджеты направлений
           </button>
         </div>
       ) : null}

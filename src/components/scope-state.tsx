@@ -23,30 +23,30 @@ type ScopeStateProps = {
 
 const stateCopy = {
   [ROOT_ISSUE_NOT_FOUND]: {
-    title: "Root issue not found",
-    body: "The requested issue key does not exist in the visible YouTrack scope.",
+    title: "Корневая задача не найдена",
+    body: "Указанный ключ задачи не найден в доступной области YouTrack.",
     tone: "#8a3b00",
   },
   [ROOT_ISSUE_FORBIDDEN]: {
-    title: "Root issue is not available",
-    body: "The current user cannot read this root issue, so phase one cannot confirm scope.",
+    title: "Нет доступа к корневой задаче",
+    body: "У текущего пользователя нет доступа к этой задаче, поэтому дерево нельзя подтвердить.",
     tone: "#7a2f16",
   },
   [PARTIAL_SCOPE_FORBIDDEN]: {
-    title: "Scope is blocked",
+    title: "Дерево заблокировано",
     body:
-      "Part of the supported subtask tree is hidden from the current user, so no tree can be confirmed.",
+      "Часть поддерживаемого дерева подзадач скрыта от текущего пользователя, поэтому дерево нельзя подтвердить целиком.",
     tone: "#9c1c1c",
   },
   SNAPSHOT_BLOCKED: {
-    title: "Snapshot is blocked",
+    title: "Снимок заблокирован",
     body:
-      "Some issues require estimate values before the refreshed snapshot can be trusted, so scenario totals stay hidden until the snapshot is trustworthy.",
+      "Для части задач нужны оценки, прежде чем обновленный снимок можно будет считать достоверным.",
     tone: "#a63b3b",
   },
   UNKNOWN_ERROR: {
-    title: "Scope request failed",
-    body: "The request did not return a usable phase-one result.",
+    title: "Ошибка запроса дерева задач",
+    body: "Запрос не вернул пригодный для работы результат.",
     tone: "#5b4012",
   },
 } as const;
@@ -93,7 +93,7 @@ export function ScopeState({
             fontWeight: 700,
           }}
         >
-          dismiss
+          закрыть
         </button>
       ) : null}
       <div
@@ -110,7 +110,7 @@ export function ScopeState({
       <p style={{ margin: 0, lineHeight: 1.6 }}>{copy.body}</p>
       {issueKey ? (
         <p style={{ margin: 0, fontWeight: 700 }}>
-          Requested root issue: <span style={{ color: copy.tone }}>{issueKey}</span>
+          Запрошенная корневая задача: <span style={{ color: copy.tone }}>{issueKey}</span>
         </p>
       ) : null}
       <p style={{ margin: 0, lineHeight: 1.6 }}>{message}</p>

@@ -25,7 +25,7 @@ function formatHours(hours: number): string {
 
 function formatMoney(value: number | null): string {
   if (value === null) {
-    return "Pricing unavailable";
+    return "Ставка недоступна";
   }
 
   return value.toLocaleString();
@@ -105,7 +105,7 @@ function TreeBranch({
         <div style={{ marginTop: "6px", lineHeight: 1.5 }}>{node.issue.summary}</div>
         {node.issue.assignee?.displayName || node.issue.assignee?.login ? (
           <p style={{ margin: "10px 0 0", lineHeight: 1.5 }}>
-            Assignee: {node.issue.assignee?.displayName ?? node.issue.assignee?.login}
+            Исполнитель: {node.issue.assignee?.displayName ?? node.issue.assignee?.login}
           </p>
         ) : null}
         {canEditScenario ? (
@@ -119,7 +119,7 @@ function TreeBranch({
             }}
           >
             <label style={{ display: "grid", gap: "6px", fontWeight: 700 }}>
-              Extra hours
+              Дополнительные часы
               <input
                 value={extraHoursInput}
                 onChange={(event) => setExtraHoursInput(event.target.value)}
@@ -155,7 +155,7 @@ function TreeBranch({
                   cursor: "pointer",
                 }}
               >
-                Apply extra hours
+                Добавить часы
               </button>
               <button
                 type="button"
@@ -175,20 +175,20 @@ function TreeBranch({
                   cursor: "pointer",
                 }}
               >
-                Clear scenario
+                Сбросить сценарий
               </button>
             </div>
             {scenarioState ? (
               <div style={{ display: "grid", gap: "4px", lineHeight: 1.5 }}>
                 <span>
-                  Forecast from scenario: +{formatHours(scenarioState.extraHours)} h for{" "}
+                  Прогноз по сценарию: +{formatHours(scenarioState.extraHours)} ч для{" "}
                   {scenarioState.assigneeLabel}
                 </span>
-                <span>Added cost hint: {formatMoney(scenarioState.addedCost)}</span>
+                <span>Дополнительная стоимость: {formatMoney(scenarioState.addedCost)}</span>
               </div>
             ) : (
               <p style={{ margin: 0, lineHeight: 1.5, color: "#6b5128" }}>
-                No extra hours added yet. Current values match the YouTrack snapshot.
+                Дополнительные часы еще не добавлены. Текущее значение совпадает со снимком YouTrack.
               </p>
             )}
           </div>
@@ -201,7 +201,7 @@ function TreeBranch({
               lineHeight: 1.5,
             }}
           >
-            This issue is missing estimate data required for the current snapshot.
+            Для этой задачи не хватает данных оценки, поэтому текущий снимок по ней нельзя считать корректным.
           </p>
         ) : null}
         {isMissingAssignee ? (
@@ -212,7 +212,7 @@ function TreeBranch({
               lineHeight: 1.5,
             }}
           >
-            This issue has no assignee. It is costed with the average rate and counted as unmapped.
+            У задачи не назначен исполнитель. Она считается по средней ставке и попадает в категорию «unmapped».
           </p>
         ) : null}
         {issueUrl ? (
@@ -228,7 +228,7 @@ function TreeBranch({
               fontWeight: 600,
             }}
           >
-            Open in YouTrack
+            Открыть в YouTrack
           </a>
         ) : null}
       </div>

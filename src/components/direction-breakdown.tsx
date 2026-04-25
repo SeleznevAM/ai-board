@@ -34,7 +34,7 @@ type DirectionRow = {
 
 function formatMoney(value: number | null): string {
   if (value === null) {
-    return "Not available";
+    return "Недоступно";
   }
 
   return value.toLocaleString("en-US", {
@@ -48,7 +48,7 @@ function formatHours(value: number): string {
 
 function formatPercent(value: number | null): string {
   if (value === null) {
-    return "Not available";
+    return "Недоступно";
   }
 
   return `${value.toFixed(2)}%`;
@@ -119,9 +119,9 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
       }}
     >
       <div style={{ display: "grid", gap: "8px" }}>
-        <h2 style={{ margin: 0 }}>Direction breakdown</h2>
+        <h2 style={{ margin: 0 }}>Разбивка по направлениям</h2>
         <p style={{ margin: 0, lineHeight: 1.6, color: "#6e5430" }}>
-          Dense desktop scan for budget, labor, and the fastest profitability drag by direction.
+          Компактная диагностическая таблица по бюджету, часам и рентабельности по направлениям.
         </p>
       </div>
 
@@ -136,13 +136,13 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
         >
           <thead>
             <tr>
-              <th style={{ ...columnHeaderStyle(), width: "14%" }}>Direction</th>
-              <th style={{ ...columnHeaderStyle(), width: "13%" }}>Budget</th>
-              <th style={{ ...columnHeaderStyle(), width: "11%" }}>Actual hours</th>
-              <th style={{ ...columnHeaderStyle(), width: "10%" }}>Extra hours</th>
-              <th style={{ ...columnHeaderStyle(), width: "16%" }}>Cost</th>
-              <th style={{ ...columnHeaderStyle(), width: "15%" }}>Profitability</th>
-              <th style={{ ...columnHeaderStyle(), width: "21%" }}>Contribution cue</th>
+              <th style={{ ...columnHeaderStyle(), width: "14%" }}>Направление</th>
+              <th style={{ ...columnHeaderStyle(), width: "13%" }}>Бюджет</th>
+              <th style={{ ...columnHeaderStyle(), width: "11%" }}>Факт, ч</th>
+              <th style={{ ...columnHeaderStyle(), width: "10%" }}>Доп. ч</th>
+              <th style={{ ...columnHeaderStyle(), width: "16%" }}>Затраты</th>
+              <th style={{ ...columnHeaderStyle(), width: "15%" }}>Рентабельность</th>
+              <th style={{ ...columnHeaderStyle(), width: "21%" }}>Вклад</th>
             </tr>
           </thead>
           <tbody>
@@ -173,7 +173,7 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
                     <div style={{ display: "grid", gap: "6px" }}>
                       <strong>{row.role}</strong>
                       <span style={{ fontSize: "0.86rem", color: status.mutedColor }}>
-                        {row.hasForecastDelta ? "forecast active" : "current active"}
+                        {row.hasForecastDelta ? "учтен прогноз" : "текущий факт"}
                       </span>
                     </div>
                   </td>
@@ -223,7 +223,7 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
                       <strong>{formatMoney(row.cost)}</strong>
                       {row.secondaryCost !== null ? (
                         <span style={{ fontSize: "0.86rem", color: status.mutedColor }}>
-                          Base: {formatMoney(row.secondaryCost)}
+                          База: {formatMoney(row.secondaryCost)}
                         </span>
                       ) : null}
                     </div>
@@ -244,7 +244,7 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
                       </span>
                       {row.secondaryProfitability !== null ? (
                         <span style={{ fontSize: "0.86rem", color: status.mutedColor }}>
-                          Base: {formatPercent(row.secondaryProfitability)}
+                          База: {formatPercent(row.secondaryProfitability)}
                         </span>
                       ) : null}
                     </div>
@@ -264,7 +264,7 @@ export function DirectionBreakdown(props: DirectionBreakdownProps) {
                     <div style={{ display: "grid", gap: "4px" }}>
                       <strong>{formatMoney(row.contributionDelta)}</strong>
                       <span style={{ fontSize: "0.86rem", color: status.mutedColor }}>
-                        delta vs budget
+                        отклонение от бюджета
                       </span>
                     </div>
                   </td>

@@ -47,6 +47,10 @@ export default function HomePage() {
   const successfulScope = result?.kind === "success" ? result.scope : null;
   const blockedScope = result?.kind === "blocked" ? result.scope : null;
   const lastSyncedAt = successfulScope?.syncedAt ?? blockedScope?.syncedAt;
+  const activeDirectionBudgets = scenarioState?.scenarioBudgets ?? allocateEvenBudgets(0);
+  const activeTotalBudget = scenarioState
+    ? Object.values(activeDirectionBudgets).reduce((sum, value) => sum + value, 0)
+    : null;
   const costResult = successfulScope?.issues
     ? calculateRequirementCost(successfulScope.issues, assigneeDirectory)
     : null;
@@ -55,15 +59,11 @@ export default function HomePage() {
       return null;
     }
 
-    const totalBudget = scenarioState
-      ? Object.values(scenarioState.baselineBudgets).reduce((sum, value) => sum + value, 0)
-      : null;
-
-    return calculateRequirementProfitability(totalBudget, costResult.totalCost);
-  }, [costResult, scenarioState]);
+    return calculateRequirementProfitability(activeTotalBudget, costResult.totalCost);
+  }, [activeTotalBudget, costResult]);
   const directionProfitability = costResult
     ? calculateDirectionProfitability(
-        scenarioState?.baselineBudgets ?? allocateEvenBudgets(0),
+        activeDirectionBudgets,
         costResult.directionTotals,
       )
     : [];
@@ -101,7 +101,7 @@ export default function HomePage() {
   }, []);
 
   function createBaselineBudgets(): DirectionBudgetMap {
-    return scenarioState?.baselineBudgets ?? allocateEvenBudgets(0);
+    return scenarioState?.scenarioBudgets ?? scenarioState?.baselineBudgets ?? allocateEvenBudgets(0);
   }
 
   function handleResolved(nextResult: RootIssueFormResult) {
@@ -131,7 +131,7 @@ export default function HomePage() {
     }
 
     return window.confirm(
-      "Refresh snapshot: Refreshing from YouTrack will discard all unsaved scenario hours on this screen. Continue?",
+      "Обновление снимка удалит все несохраненные сценарные часы и правки бюджета на этом экране. Продолжить?",
     );
   }
 
@@ -168,10 +168,7 @@ export default function HomePage() {
     });
   }
 
-  const baselineTotalBudget = scenarioState
-    ? Object.values(scenarioState.baselineBudgets).reduce((sum, value) => sum + value, 0)
-    : null;
-  const activeDirectionBudgets = scenarioState?.scenarioBudgets ?? allocateEvenBudgets(0);
+  const baselineTotalBudget = activeTotalBudget;
   const scenarioIssueStateByIssueKey = Object.fromEntries(
     (scenarioForecast?.scenarioLedger ?? []).map((row) => [
       row.issueKey,
@@ -264,14 +261,14 @@ export default function HomePage() {
               color: "#7a5a22",
             }}
           >
-            Phase 5 PM dashboard
+            Панель проекта
           </p>
           <h1 style={{ margin: 0, fontSize: "clamp(2.5rem, 6vw, 4.5rem)" }}>
-            Requirement decision dashboard
+            Панель рентабельности требования
           </h1>
           <p style={{ maxWidth: "62ch", fontSize: "1.1rem", lineHeight: 1.6, margin: 0 }}>
-            Refresh one requirement from YouTrack, keep the scenario overlay separate from
-            imported facts, and review the PM decision first before drilling into directions.
+            Обнови требование из YouTrack, отдельно веди сценарные изменения и сначала смотри
+            итоговое решение по требованию, а уже потом проваливайся в направления.
           </p>
         </header>
 
@@ -291,10 +288,9 @@ export default function HomePage() {
               gap: "12px",
             }}
           >
-            <h2 style={{ margin: 0 }}>Root issue lookup</h2>
+            <h2 style={{ margin: 0 }}>Поиск корневой задачи</h2>
             <p style={{ margin: 0, lineHeight: 1.6 }}>
-              Refresh the requirement snapshot from YouTrack and keep the canonical source
-              of truth ready for the dashboard below.
+              Обнови снимок требования из YouTrack и подготовь актуальные данные для расчета ниже.
             </p>
             <RootIssueForm
               onResolved={handleResolved}
@@ -311,16 +307,16 @@ export default function HomePage() {
               gap: "12px",
             }}
           >
-            <h2 style={{ margin: 0 }}>Dashboard controls</h2>
+            <h2 style={{ margin: 0 }}>Управление справочником</h2>
             <p style={{ margin: 0, lineHeight: 1.6 }}>
-              Update assignee rates before trusting direction cost, then switch between the
-              compact overview and dense diagnostic tab.
+              Перед анализом затрат проверь роли и ставки сотрудников, а затем переключайся между
+              обзором и детализацией по направлениям.
             </p>
             <Link
               href="/assignees"
               style={{ color: "#6f4a16", fontWeight: 700, textDecoration: "none" }}
             >
-              Open assignee directory
+              Открыть справочник сотрудников
             </Link>
           </div>
         </section>
@@ -346,7 +342,7 @@ export default function HomePage() {
           <ScopeState
             code="SNAPSHOT_BLOCKED"
             issueKey={result.scope.issueKey}
-            message="The current refresh is blocked because some issues that depend on estimate values are not estimated yet."
+            message="Текущее обновление заблокировано, потому что часть задач, которые считаются по оценке, еще не оценены."
             blockedIssueKeys={result.scope.blockedIssues?.map((issue) => issue.issueKey) ?? []}
             dismissible
           />
@@ -367,10 +363,10 @@ export default function HomePage() {
               gap: "10px",
             }}
           >
-            <h2 style={{ margin: 0 }}>Current state</h2>
+            <h2 style={{ margin: 0 }}>Текущее состояние</h2>
             <p style={{ margin: 0, lineHeight: 1.6 }}>
-              No refresh has been requested yet. A successful refresh will render the
-              current tree here together with the latest sync time.
+              Снимок еще не запрашивался. После успешного обновления здесь появится дерево задач
+              и время последней синхронизации.
             </p>
           </div>
         ) : null}

@@ -86,9 +86,9 @@ export function AssigneeDirectoryForm() {
       }}
     >
       <div style={{ display: "grid", gap: "8px" }}>
-        <h1 style={{ margin: 0 }}>Assignee Directory</h1>
+        <h1 style={{ margin: 0 }}>Справочник сотрудников</h1>
         <p style={{ margin: 0, lineHeight: 1.6 }}>
-          Map the YouTrack assignee value to one role and one personal hourly rate. Saved in this browser via localStorage.
+          Сопоставь исполнителя из YouTrack с ролью и персональной ставкой. Данные сохраняются в этом браузере через localStorage.
         </p>
       </div>
 
@@ -104,7 +104,7 @@ export function AssigneeDirectoryForm() {
         }}
       >
         <label style={{ display: "grid", gap: "6px" }}>
-          Assignee key
+          Ключ сотрудника
           <input
             value={draft.assigneeKey}
             onChange={(event) => setDraft((current) => ({ ...current, assigneeKey: event.target.value }))}
@@ -114,7 +114,7 @@ export function AssigneeDirectoryForm() {
         </label>
 
         <label style={{ display: "grid", gap: "6px" }}>
-          Assignee label
+          Имя сотрудника
           <input
             value={draft.assigneeLabel}
             onChange={(event) => setDraft((current) => ({ ...current, assigneeLabel: event.target.value }))}
@@ -124,7 +124,7 @@ export function AssigneeDirectoryForm() {
         </label>
 
         <label style={{ display: "grid", gap: "6px" }}>
-          Role
+          Роль
           <select
             value={draft.role}
             onChange={(event) =>
@@ -144,7 +144,7 @@ export function AssigneeDirectoryForm() {
         </label>
 
         <label style={{ display: "grid", gap: "6px" }}>
-          Hourly rate
+          Почасовая ставка
           <input
             value={draft.hourlyRate}
             onChange={(event) => setDraft((current) => ({ ...current, hourlyRate: event.target.value }))}
@@ -168,7 +168,7 @@ export function AssigneeDirectoryForm() {
             cursor: "pointer",
           }}
         >
-          Save assignee
+          Сохранить сотрудника
         </button>
       </form>
 
@@ -179,7 +179,7 @@ export function AssigneeDirectoryForm() {
         }}
       >
         {entries.length === 0 ? (
-          <p style={{ margin: 0 }}>No assignee mappings yet.</p>
+          <p style={{ margin: 0 }}>В справочнике пока нет сотрудников.</p>
         ) : (
           entries.map((entry) => (
             <article
@@ -194,9 +194,9 @@ export function AssigneeDirectoryForm() {
               }}
             >
               <div style={{ fontWeight: 700 }}>{entry.assigneeLabel}</div>
-              <div>Key: {entry.assigneeKey}</div>
-              <div>Role: {entry.role}</div>
-              <div>Hourly rate: {entry.hourlyRate}</div>
+              <div>Ключ: {entry.assigneeKey}</div>
+              <div>Роль: {entry.role}</div>
+              <div>Ставка: {entry.hourlyRate}</div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <button
                   type="button"
@@ -209,7 +209,7 @@ export function AssigneeDirectoryForm() {
                     cursor: "pointer",
                   }}
                 >
-                  Edit
+                  Изменить
                 </button>
                 <button
                   type="button"
@@ -223,7 +223,7 @@ export function AssigneeDirectoryForm() {
                     cursor: "pointer",
                   }}
                 >
-                  Delete
+                  Удалить
                 </button>
               </div>
             </article>

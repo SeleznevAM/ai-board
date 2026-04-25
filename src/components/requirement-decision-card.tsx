@@ -1,5 +1,6 @@
 import React, { type ReactNode } from "react";
 
+import { calculateRequiredBudgetForTargetMargin } from "../lib/costing/calculateProfitability";
 import type { RequirementProfitability } from "../lib/costing/types";
 import type { ScenarioComparison } from "../lib/scenario/types";
 import {
@@ -15,7 +16,7 @@ type RequirementDecisionCardProps = {
 
 function formatMoney(value: number | null): string {
   if (value === null) {
-    return "Not available";
+    return "Недоступно";
   }
 
   return value.toLocaleString("en-US", {
@@ -29,7 +30,7 @@ function formatHours(value: number): string {
 
 function formatPercent(value: number | null): string {
   if (value === null) {
-    return "Not available";
+    return "Недоступно";
   }
 
   return `${value.toFixed(2)}%`;
@@ -83,11 +84,13 @@ export function RequirementDecisionCard({
   profitability,
   hasScenarioChanges,
 }: RequirementDecisionCardProps) {
-  const budgetChanged = profitability.current.budget !== profitability.forecast.budget;
   const laborChanged = totalHours.current !== totalHours.forecast;
   const marginChanged =
     profitability.current.marginPercent !== profitability.forecast.marginPercent;
   const marginStatus = getDashboardStatusPresentation(profitability.current.marginPercent);
+  const targetBudget = calculateRequiredBudgetForTargetMargin(profitability.current.cost);
+  const needsApproval =
+    profitability.current.neededUpsell !== null && profitability.current.neededUpsell > 0;
 
   return (
     <section
@@ -111,7 +114,7 @@ export function RequirementDecisionCard({
             color: "#7a5a22",
           }}
         >
-          Requirement decision card
+          Карточка решения
         </p>
         <h2 style={{ margin: 0, fontSize: "1.75rem" }}>Итог по требованию</h2>
         <p style={{ margin: 0, color: "#6e5430", lineHeight: 1.5 }}>
@@ -148,10 +151,16 @@ export function RequirementDecisionCard({
             <span>Дельта: {formatMoney(profitability.current.delta)}</span>
           </div>
           {supportingLine({
-            label: "Сценарный бюджет",
-            value: formatMoney(profitability.forecast.budget),
-            hidden: !hasScenarioChanges || !budgetChanged,
-            slot: "scenario-budget",
+            label: "Целевой бюджет",
+            value: formatMoney(targetBudget),
+            hidden: !needsApproval,
+            slot: "target-budget",
+          })}
+          {supportingLine({
+            label: "Требуется к согласованию",
+            value: `+${formatMoney(profitability.current.neededUpsell)}`,
+            hidden: !needsApproval,
+            slot: "required-approval",
           })}
         </article>
 
@@ -207,9 +216,6 @@ export function RequirementDecisionCard({
           </div>
           <div style={{ display: "grid", gap: "6px" }}>
             <span>{marginStatus.label}</span>
-            <span data-slot="needed-upsell">
-              До 20% не хватает: {formatMoney(profitability.current.neededUpsell)}
-            </span>
           </div>
           {supportingLine({
             label: "Сценарная рентабельность",

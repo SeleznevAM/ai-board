@@ -48,7 +48,7 @@ export function getDashboardStatusPresentation(
 
   return {
     tone,
-    label: "Budget required",
+    label: "Требуется бюджет",
     borderColor: "rgba(75, 49, 11, 0.12)",
     background: "rgba(255, 252, 247, 0.96)",
     textColor: "#4b310b",

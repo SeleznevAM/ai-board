@@ -72,7 +72,7 @@ export function RootIssueForm({
         kind: "error",
         code: "UNKNOWN_ERROR",
         issueKey: "",
-        message: "Enter a root issue key before requesting scope discovery.",
+        message: "Укажи ключ корневой задачи перед обновлением снимка.",
       });
       return;
     }
@@ -120,7 +120,7 @@ export function RootIssueForm({
         issueKey: normalizedRootIssue,
         message:
           payload.message ??
-          "The phase-one scope request failed before a complete supported tree was returned.",
+          "Не удалось получить полное поддерживаемое дерево задач.",
       });
     } catch (error) {
       onResolved({
@@ -130,7 +130,7 @@ export function RootIssueForm({
         message:
           error instanceof Error
             ? error.message
-            : "Unexpected error while requesting the phase-one scope.",
+            : "Непредвиденная ошибка во время запроса дерева задач.",
       });
     } finally {
       setIsSubmitting(false);
@@ -153,7 +153,7 @@ export function RootIssueForm({
           fontWeight: 600,
         }}
       >
-        root issue
+        Корневая задача
         <input
           id="root-issue"
           name="rootIssueKey"
@@ -186,7 +186,7 @@ export function RootIssueForm({
           color: "#fff7ea",
         }}
       >
-        {isSubmitting ? "Refreshing snapshot..." : "Refresh snapshot"}
+        {isSubmitting ? "Обновляем снимок..." : "Обновить снимок"}
       </button>
 
       <p
@@ -196,7 +196,8 @@ export function RootIssueForm({
           color: "#6b5128",
         }}
       >
-        Last sync: {lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : "No successful refresh yet"}
+        Последняя синхронизация:{" "}
+        {lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : "Успешных обновлений еще не было"}
       </p>
     </form>
   );

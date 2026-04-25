@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 
 import {
   calculateAverageRate,
+  getAssigneeLookupKeys,
   normalizeAssigneeKey,
   resolveAssigneeDirectoryMatch,
 } from "./assigneeDirectory";
@@ -23,14 +24,14 @@ const entries: AssigneeDirectoryEntry[] = [
 ];
 
 describe("normalizeAssigneeKey", () => {
-  it("prefers id, then login, then display name", () => {
+  it("prefers login, then display name, then id", () => {
     expect(
       normalizeAssigneeKey({
         id: "USR-1",
         login: "anna",
         displayName: "Anna Ivanova",
       }),
-    ).toBe("usr-1");
+    ).toBe("anna");
 
     expect(
       normalizeAssigneeKey({
@@ -39,6 +40,18 @@ describe("normalizeAssigneeKey", () => {
         displayName: "Anna Ivanova",
       }),
     ).toBe("anna");
+  });
+});
+
+describe("getAssigneeLookupKeys", () => {
+  it("returns normalized lookup candidates in matching order", () => {
+    expect(
+      getAssigneeLookupKeys({
+        id: "USR-1",
+        login: "anna",
+        displayName: "Anna Ivanova",
+      }),
+    ).toEqual(["anna", "anna ivanova", "usr-1"]);
   });
 });
 
@@ -100,6 +113,33 @@ describe("resolveAssigneeDirectoryMatch", () => {
       role: "unmapped",
       hourlyRate: 2500,
       warning: "UNMAPPED_ASSIGNEE",
+    });
+  });
+
+  it("matches by display name when directory key stores executor label instead of login", () => {
+    expect(
+      resolveAssigneeDirectoryMatch(
+        {
+          id: "USR-77",
+          login: "anna.dev",
+          displayName: "Anna Ivanova",
+        },
+        [
+          {
+            assigneeKey: "Anna Ivanova",
+            assigneeLabel: "Анна Иванова",
+            role: "backend",
+            hourlyRate: 2000,
+          },
+        ],
+      ),
+    ).toEqual({
+      status: "matched",
+      assigneeKey: "Anna Ivanova",
+      assigneeLabel: "Анна Иванова",
+      role: "backend",
+      hourlyRate: 2000,
+      warning: null,
     });
   });
 

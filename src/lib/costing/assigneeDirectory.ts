@@ -6,16 +6,27 @@ function normalizeIdentityPart(value: string | null | undefined): string | null 
   return normalized.length > 0 ? normalized : null;
 }
 
-export function normalizeAssigneeKey(assignee: SnapshotIssueAssignee | null): string | null {
+export function getAssigneeLookupKeys(
+  assignee: SnapshotIssueAssignee | null,
+): readonly string[] {
   if (!assignee) {
-    return null;
+    return [];
   }
 
-  return (
-    normalizeIdentityPart(assignee.id) ??
-    normalizeIdentityPart(assignee.login) ??
-    normalizeIdentityPart(assignee.displayName)
+  const candidates = [
+    normalizeIdentityPart(assignee.login),
+    normalizeIdentityPart(assignee.displayName),
+    normalizeIdentityPart(assignee.id),
+  ];
+
+  return candidates.filter(
+    (candidate, index, all): candidate is string =>
+      candidate !== null && all.indexOf(candidate) === index,
   );
+}
+
+export function normalizeAssigneeKey(assignee: SnapshotIssueAssignee | null): string | null {
+  return getAssigneeLookupKeys(assignee)[0] ?? null;
 }
 
 function isValidHourlyRate(value: number): boolean {
@@ -66,11 +77,13 @@ export function resolveAssigneeDirectoryMatch(
   entries: readonly AssigneeDirectoryEntry[],
 ): AssigneeDirectoryResolution {
   const averageRate = calculateAverageRate(entries);
-  const normalizedKey = normalizeAssigneeKey(assignee);
+  const normalizedKeys = getAssigneeLookupKeys(assignee);
+  const normalizedKey = normalizedKeys[0] ?? null;
   const assigneeLabel = getAssigneeLabel(assignee);
+  const directoryIndex = buildDirectoryIndex(entries);
 
-  if (normalizedKey) {
-    const match = buildDirectoryIndex(entries).get(normalizedKey);
+  for (const candidate of normalizedKeys) {
+    const match = directoryIndex.get(candidate);
     if (match && isValidHourlyRate(match.hourlyRate)) {
       return {
         status: "matched",

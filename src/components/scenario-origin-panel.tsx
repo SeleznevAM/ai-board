@@ -16,7 +16,7 @@ function formatHours(value: number): string {
 
 function formatTimestamp(value: string | null): string {
   if (!value) {
-    return "Not available";
+    return "Недоступно";
   }
 
   return new Date(value).toLocaleString();
@@ -81,10 +81,10 @@ export function ScenarioOriginPanel({
       }}
     >
       <div style={{ display: "grid", gap: "8px" }}>
-        <h2 style={{ margin: 0 }}>Scenario provenance</h2>
+        <h2 style={{ margin: 0 }}>Источник данных сценария</h2>
         <p style={{ margin: 0, lineHeight: 1.6 }}>
-          Actual values come from the latest YouTrack snapshot. Forecast values come only
-          from edits on this screen.
+          Фактические значения приходят из последнего снимка YouTrack. Прогнозные значения
+          формируются только из правок на этом экране.
         </p>
       </div>
 
@@ -113,7 +113,7 @@ export function ScenarioOriginPanel({
               color: "#6e5430",
             }}
           >
-            Root issue
+            Корневая задача
           </div>
           <div>{origin.rootIssueKey}</div>
         </div>
@@ -135,7 +135,7 @@ export function ScenarioOriginPanel({
               color: "#6e5430",
             }}
           >
-            Last sync
+            Последняя синхронизация
           </div>
           <div>{formatTimestamp(origin.lastSyncedAt)}</div>
         </div>
@@ -148,8 +148,8 @@ export function ScenarioOriginPanel({
           gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
         }}
       >
-        {renderBudgetList("Baseline budgets", origin.baselineBudgets)}
-        {renderBudgetList("Scenario budgets", origin.scenarioBudgets)}
+        {renderBudgetList("Базовые бюджеты", origin.baselineBudgets)}
+        {renderBudgetList("Сценарные бюджеты", origin.scenarioBudgets)}
       </div>
 
       <div
@@ -171,7 +171,7 @@ export function ScenarioOriginPanel({
             color: "#6f4a16",
           }}
         >
-          Issue deltas
+          Изменения по задачам
         </div>
         {extraHourEntries.length > 0 ? (
           extraHourEntries.map(([issueKey, hours]) => (
@@ -190,8 +190,8 @@ export function ScenarioOriginPanel({
         ) : (
           <p style={{ margin: 0, lineHeight: 1.6 }}>
             {hasScenarioChanges
-              ? "No extra hours are stored in the current scenario."
-              : "No issue-level extra hours yet. Forecast currently matches the snapshot."}
+              ? "В текущем сценарии нет дополнительных часов по задачам."
+              : "Дополнительные часы по задачам еще не заданы. Прогноз пока совпадает со снимком."}
           </p>
         )}
       </div>

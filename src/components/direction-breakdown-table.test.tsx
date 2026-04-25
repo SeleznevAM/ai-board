@@ -88,8 +88,8 @@ describe("DirectionBreakdown", () => {
       "contribution",
     ]);
     expect(row?.props["data-status"]).toBe("risk");
-    expect(collectText(row)).toContain("forecast active");
-    expect(collectText(row)).toContain("delta vs budget");
+    expect(collectText(row)).toContain("учтен прогноз");
+    expect(collectText(row)).toContain("отклонение от бюджета");
   });
 
   it("keeps unmapped visible in the dense scan surface", () => {
@@ -168,6 +168,6 @@ describe("DirectionBreakdown", () => {
     const row = collectElements(tree, (element) => element.props["data-role"] === "qa")[0];
 
     expect(row?.props["data-status"]).toBe("good");
-    expect(collectText(row)).toContain("current active");
+    expect(collectText(row)).toContain("текущий факт");
   });
 });

@@ -58,7 +58,7 @@ describe("dashboard-status", () => {
 
     expect(presentation).toMatchObject({
       tone: "neutral",
-      label: "Budget required",
+      label: "Требуется бюджет",
     });
   });
 

@@ -80,8 +80,7 @@ describe("RequirementDecisionCard", () => {
     expect((tree as ReactElement<Record<string, unknown>>).props["data-scenario-state"]).toBe(
       "baseline",
     );
-    expect(scenarioSlots.map((element) => element.props["data-slot"])).toEqual(["needed-upsell"]);
-    expect(collectText(tree)).toContain("До 20% не хватает:");
+    expect(scenarioSlots).toHaveLength(0);
   });
 
   it("shows inline secondary scenario values only inside the relevant blocks", () => {
@@ -111,15 +110,16 @@ describe("RequirementDecisionCard", () => {
     ).map((element) => element.props["data-slot"]);
 
     expect(scenarioSlots).toEqual([
-      "scenario-budget",
+      "target-budget",
+      "required-approval",
       "scenario-hours",
-      "needed-upsell",
       "scenario-margin",
     ]);
     expect((tree as ReactElement<Record<string, unknown>>).props["data-scenario-state"]).toBe(
       "changed",
     );
-    expect(collectText(tree)).toContain("Сценарный бюджет");
+    expect(collectText(tree)).toContain("Целевой бюджет");
+    expect(collectText(tree)).toContain("Требуется к согласованию");
     expect(collectText(tree)).toContain("Сценарные трудозатраты");
     expect(collectText(tree)).toContain("Сценарная рентабельность");
   });
@@ -150,6 +150,7 @@ describe("RequirementDecisionCard", () => {
 
     expect(marginBlock?.props["data-status"]).toBe("risk");
     expect(collectText(marginBlock)).toContain("< 20%");
-    expect(collectText(marginBlock)).toContain("До 20% не хватает:");
+    expect(collectText(tree)).toContain("Целевой бюджет");
+    expect(collectText(tree)).toContain("Требуется к согласованию");
   });
 });
