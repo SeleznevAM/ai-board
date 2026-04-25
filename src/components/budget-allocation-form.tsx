@@ -10,10 +10,10 @@ import {
 import { COST_DIRECTION_KEYS, type DirectionBudgetMap } from "../lib/costing/types";
 
 type BudgetAllocationFormProps = {
-  readonly totalBudget: number | null;
-  readonly directionBudgets: DirectionBudgetMap;
+  readonly baselineTotalBudget: number | null;
+  readonly baselineDirectionBudgets: DirectionBudgetMap;
+  readonly scenarioDirectionBudgets: DirectionBudgetMap;
   readonly onChange: (nextState: {
-    totalBudget: number | null;
     directionBudgets: DirectionBudgetMap;
   }) => void;
 };
@@ -32,49 +32,54 @@ function parseBudgetValue(value: string): number | null {
 }
 
 export function BudgetAllocationForm({
-  totalBudget,
-  directionBudgets,
+  baselineTotalBudget,
+  baselineDirectionBudgets,
+  scenarioDirectionBudgets,
   onChange,
 }: BudgetAllocationFormProps) {
-  const [totalBudgetInput, setTotalBudgetInput] = useState(totalBudget?.toString() ?? "");
+  const [totalBudgetInput, setTotalBudgetInput] = useState(
+    recalculateTotalBudget(scenarioDirectionBudgets).toString(),
+  );
   const [isEditorOpen, setIsEditorOpen] = useState(false);
-  const [draftBudgets, setDraftBudgets] = useState<DirectionBudgetMap>(directionBudgets);
+  const [draftBudgets, setDraftBudgets] = useState<DirectionBudgetMap>(scenarioDirectionBudgets);
 
   useEffect(() => {
-    setTotalBudgetInput(totalBudget?.toString() ?? "");
-  }, [totalBudget]);
+    setTotalBudgetInput(recalculateTotalBudget(scenarioDirectionBudgets).toString());
+  }, [scenarioDirectionBudgets]);
 
   useEffect(() => {
-    setDraftBudgets(directionBudgets);
-  }, [directionBudgets]);
+    setDraftBudgets(scenarioDirectionBudgets);
+  }, [scenarioDirectionBudgets]);
 
   function handleTotalBudgetChange(value: string) {
     setTotalBudgetInput(value);
     const parsed = parseBudgetValue(value);
     if (parsed === null) {
       onChange({
-        totalBudget: null,
         directionBudgets: allocateEvenBudgets(0),
       });
       return;
     }
 
     onChange({
-      totalBudget: parsed,
       directionBudgets: allocateEvenBudgets(parsed),
     });
   }
 
   function handleSaveDirectionBudgets() {
-    const nextDirectionBudgets = applyDirectionBudgetOverrides(directionBudgets, draftBudgets);
-    const nextTotalBudget = recalculateTotalBudget(nextDirectionBudgets);
-    setTotalBudgetInput(String(nextTotalBudget));
+    const nextDirectionBudgets = applyDirectionBudgetOverrides(
+      scenarioDirectionBudgets,
+      draftBudgets,
+    );
     onChange({
-      totalBudget: nextTotalBudget,
       directionBudgets: nextDirectionBudgets,
     });
     setIsEditorOpen(false);
   }
+
+  const scenarioTotalBudget = recalculateTotalBudget(scenarioDirectionBudgets);
+  const baselineTotalLabel = baselineTotalBudget === null ? "Не задан" : baselineTotalBudget.toFixed(2);
+  const scenarioTotalLabel = scenarioTotalBudget.toFixed(2);
 
   return (
     <section
@@ -87,9 +92,58 @@ export function BudgetAllocationForm({
         background: "rgba(255, 250, 242, 0.78)",
       }}
     >
-      <h2 style={{ margin: 0 }}>Budget allocation</h2>
+      <h2 style={{ margin: 0 }}>Распределение бюджета</h2>
+      <div
+        style={{
+          display: "grid",
+          gap: "10px",
+          borderRadius: "16px",
+          border: "1px solid rgba(75, 49, 11, 0.12)",
+          background: "rgba(255, 255, 255, 0.6)",
+          padding: "16px",
+        }}
+      >
+        <div style={{ display: "grid", gap: "4px" }}>
+          <span style={{ fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.04em" }}>
+            Бюджет в расчете
+          </span>
+          <span>Текущее значение: {scenarioTotalLabel}</span>
+        </div>
+        <div style={{ display: "grid", gap: "4px" }}>
+          <span style={{ fontSize: "0.85rem", fontWeight: 700, letterSpacing: "0.04em" }}>
+            Значение при последнем обновлении
+          </span>
+          <span>Исходное значение: {baselineTotalLabel}</span>
+        </div>
+        <div
+          style={{
+            display: "grid",
+            gap: "6px",
+            gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          }}
+        >
+          {COST_DIRECTION_KEYS.map((direction) => (
+            <div
+              key={direction}
+              style={{
+                borderRadius: "12px",
+                background: "rgba(255, 250, 242, 0.88)",
+                padding: "8px 10px",
+              }}
+            >
+              <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{direction}</div>
+              <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
+                Было {baselineDirectionBudgets[direction].toFixed(2)}
+              </div>
+              <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
+                Сейчас {scenarioDirectionBudgets[direction].toFixed(2)}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
       <label style={{ display: "grid", gap: "6px" }}>
-        Total budget
+        Бюджет
         <input
           value={totalBudgetInput}
           onChange={(event) => handleTotalBudgetChange(event.target.value)}
@@ -118,7 +172,7 @@ export function BudgetAllocationForm({
             cursor: "pointer",
           }}
         >
-          {isEditorOpen ? "Hide direction budgets" : "Edit direction budgets"}
+          {isEditorOpen ? "Скрыть бюджеты направлений" : "Изменить бюджеты направлений"}
         </button>
       </div>
 
@@ -166,7 +220,7 @@ export function BudgetAllocationForm({
               cursor: "pointer",
             }}
           >
-            Save direction budgets
+            Сохранить бюджеты направлений
           </button>
         </div>
       ) : null}

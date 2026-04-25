@@ -36,6 +36,7 @@ export type RootIssueFormResult =
 type RootIssueFormProps = {
   readonly onResolved: (result: RootIssueFormResult) => void;
   readonly lastSyncedAt?: string;
+  readonly onBeforeSubmit?: () => boolean;
 };
 
 function getErrorCode(status: number) {
@@ -54,7 +55,11 @@ function getErrorCode(status: number) {
   return "UNKNOWN_ERROR" as const;
 }
 
-export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) {
+export function RootIssueForm({
+  onResolved,
+  lastSyncedAt,
+  onBeforeSubmit,
+}: RootIssueFormProps) {
   const [rootIssueKey, setRootIssueKey] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -67,8 +72,12 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
         kind: "error",
         code: "UNKNOWN_ERROR",
         issueKey: "",
-        message: "Enter a root issue key before requesting scope discovery.",
+        message: "Укажи ключ корневой задачи перед обновлением снимка.",
       });
+      return;
+    }
+
+    if (onBeforeSubmit && !onBeforeSubmit()) {
       return;
     }
 
@@ -111,7 +120,7 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
         issueKey: normalizedRootIssue,
         message:
           payload.message ??
-          "The phase-one scope request failed before a complete supported tree was returned.",
+          "Не удалось получить полное поддерживаемое дерево задач.",
       });
     } catch (error) {
       onResolved({
@@ -121,7 +130,7 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
         message:
           error instanceof Error
             ? error.message
-            : "Unexpected error while requesting the phase-one scope.",
+            : "Непредвиденная ошибка во время запроса дерева задач.",
       });
     } finally {
       setIsSubmitting(false);
@@ -144,7 +153,7 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
           fontWeight: 600,
         }}
       >
-        root issue
+        Корневая задача
         <input
           id="root-issue"
           name="rootIssueKey"
@@ -177,7 +186,7 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
           color: "#fff7ea",
         }}
       >
-        {isSubmitting ? "Refreshing snapshot..." : "Refresh snapshot"}
+        {isSubmitting ? "Обновляем снимок..." : "Обновить снимок"}
       </button>
 
       <p
@@ -187,7 +196,8 @@ export function RootIssueForm({ onResolved, lastSyncedAt }: RootIssueFormProps) 
           color: "#6b5128",
         }}
       >
-        Last sync: {lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : "No successful refresh yet"}
+        Последняя синхронизация:{" "}
+        {lastSyncedAt ? new Date(lastSyncedAt).toLocaleString() : "Успешных обновлений еще не было"}
       </p>
     </form>
   );

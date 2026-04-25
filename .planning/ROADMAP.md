@@ -15,7 +15,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 - [x] **Phase 1: YouTrack Data Contract** - Пользователь вводит root issue и видит, какую поддерживаемую иерархию система реально возьмет в расчет.
 - [x] **Phase 2: Ingestion Correctness** - Система надежно синхронизирует задачи и worklog-данные из YouTrack и явно показывает полноту расчета.
 - [x] **Phase 3: Cost Engine** - Импортированные трудозатраты превращаются в себестоимость и базовую рентабельность по требованию и направлениям.
-- [ ] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
+- [x] **Phase 4: Scenario Editing** - Менеджер меняет бюджеты и дополнительные часы как отдельный сценарий с сохранением происхождения расчета.
 - [ ] **Phase 5: PM Dashboard** - Пользователь получает быстрый экран принятия решения с итогами, цветовой индикацией и вкладом направлений.
 
 ## Phase Details
@@ -72,7 +72,11 @@ Plans:
   2. Пользователь может добавить дополнительные часы по одному или нескольким направлениям и сразу увидеть прогнозные затраты и прогнозную рентабельность рядом с фактическими значениями.
   3. Система хранит исходные импортированные данные YouTrack отдельно от пользовательских бюджетов и дополнительных часов, так что происхождение расчета можно объяснить.
   4. Для каждого расчета сохраняются метаданные о root issue, времени обновления YouTrack и использованных бюджетах и дополнительных часах.
-**Plans**: TBD
+**Plans**: 3 plans
+Plans:
+- [x] 04-01-PLAN.md - Freeze the pure scenario overlay contracts, provenance model, and forecast math with regression coverage.
+- [x] 04-02-PLAN.md - Wire page-level scenario state, refresh discard confirmation, baseline-vs-scenario budgets, and task-card extra-hours editing.
+- [x] 04-03-PLAN.md - Present current-vs-forecast metrics and in-memory provenance while keeping blocked snapshot trust boundaries intact.
 **UI hint**: yes
 
 ### Phase 5: PM Dashboard
@@ -84,7 +88,10 @@ Plans:
   2. Пользователь видит таблицу по направлениям с бюджетом, фактическими часами, дополнительными часами, затратами и рентабельностью для каждого направления.
   3. Рентабельность подсвечивается красным ниже 20% и зеленым при 20% и выше как на общем итоге, так и на разбивке по направлениям.
   4. Пользователь может быстро понять, какие направления дают перерасход и какой вклад они вносят в итоговую рентабельность требования.
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [x] 05-01-PLAN.md - Create reusable dashboard presentation primitives: threshold status helper, two-tab shell, and compact requirement decision card.
+- [ ] 05-02-PLAN.md - Recompose the page around the new shell and move direction diagnostics into a dense desktop directions tab.
 **UI hint**: yes
 
 ## Progress
@@ -97,5 +104,16 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5
 | 1. YouTrack Data Contract | 3/3 | Complete | 2026-04-07 |
 | 2. Ingestion Correctness | 3/3 | Complete | 2026-04-08 |
 | 3. Cost Engine | 3/3 | Complete | 2026-04-08 |
-| 4. Scenario Editing | 0/TBD | Not started | - |
-| 5. PM Dashboard | 0/TBD | Not started | - |
+| 4. Scenario Editing | 3/3 | Complete | 2026-04-14 |
+| 5. PM Dashboard | 1/2 | In progress | - |
+
+## Backlog
+
+### Phase 999.1: Вынести целевую рентабельность в конфигурацию (BACKLOG)
+
+**Goal:** [Captured for future planning]
+**Requirements:** TBD
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (promote with $gsd-review-backlog when ready)

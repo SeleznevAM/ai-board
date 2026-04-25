@@ -20,7 +20,7 @@ export default function AssigneesPage() {
         }}
       >
         <Link href="/" style={{ color: "#6f4a16", textDecoration: "none", fontWeight: 700 }}>
-          Back to requirement view
+          Вернуться к требованию
         </Link>
         <AssigneeDirectoryForm />
       </section>
