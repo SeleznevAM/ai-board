@@ -1,5 +1,6 @@
 import React from "react";
 
+import { formatLocaleNumber } from "../lib/formatting/number";
 import {
   getDashboardStatusBlockStyle,
   getDashboardStatusPresentation,
@@ -33,17 +34,16 @@ type DirectionRow = {
 };
 
 function formatMoney(value: number | null): string {
-  if (value === null) {
-    return "Недоступно";
-  }
-
-  return value.toLocaleString("en-US", {
+  return formatLocaleNumber(value, {
     maximumFractionDigits: 2,
   });
 }
 
 function formatHours(value: number): string {
-  return value.toFixed(2);
+  return formatLocaleNumber(value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 function formatPercent(value: number | null): string {
@@ -51,7 +51,10 @@ function formatPercent(value: number | null): string {
     return "Недоступно";
   }
 
-  return `${value.toFixed(2)}%`;
+  return `${formatLocaleNumber(value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
 }
 
 function columnHeaderStyle() {
@@ -105,7 +108,13 @@ function buildDirectionRows({
 }
 
 export function DirectionBreakdown(props: DirectionBreakdownProps) {
-  const rows = buildDirectionRows(props);
+  const rows = buildDirectionRows(props).filter((row) => {
+    if (row.role !== "unmapped") {
+      return true;
+    }
+
+    return row.actualHours > 0 || row.extraHours > 0 || row.cost !== 0;
+  });
 
   return (
     <section

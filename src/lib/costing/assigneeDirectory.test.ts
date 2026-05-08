@@ -147,7 +147,7 @@ describe("resolveAssigneeDirectoryMatch", () => {
     expect(resolveAssigneeDirectoryMatch(null, entries)).toEqual({
       status: "fallback",
       assigneeKey: null,
-      assigneeLabel: "Unassigned issue",
+      assigneeLabel: "Задача без исполнителя",
       role: "unmapped",
       hourlyRate: 2500,
       warning: "MISSING_ASSIGNEE",

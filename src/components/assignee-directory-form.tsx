@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 
+import { formatLocaleNumber, parseLocaleNumber } from "../lib/formatting/number";
 import { loadAssigneeDirectory, saveAssigneeDirectory } from "../lib/costing/storage";
 import { DIRECTION_KEYS, type AssigneeDirectoryEntry, type DirectionKey } from "../lib/costing/types";
 
@@ -24,13 +25,22 @@ function toDraft(entry: AssigneeDirectoryEntry): DraftEntry {
     assigneeKey: entry.assigneeKey,
     assigneeLabel: entry.assigneeLabel,
     role: entry.role,
-    hourlyRate: String(entry.hourlyRate),
+    hourlyRate: formatLocaleNumber(entry.hourlyRate, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }),
   };
 }
 
 function toEntry(draft: DraftEntry): AssigneeDirectoryEntry | null {
-  const hourlyRate = Number(draft.hourlyRate);
-  if (!draft.assigneeKey.trim() || !draft.assigneeLabel.trim() || !Number.isFinite(hourlyRate) || hourlyRate <= 0) {
+  const hourlyRate = parseLocaleNumber(draft.hourlyRate);
+  if (
+    !draft.assigneeKey.trim() ||
+    !draft.assigneeLabel.trim() ||
+    hourlyRate === null ||
+    !Number.isFinite(hourlyRate) ||
+    hourlyRate <= 0
+  ) {
     return null;
   }
 
@@ -196,7 +206,13 @@ export function AssigneeDirectoryForm() {
               <div style={{ fontWeight: 700 }}>{entry.assigneeLabel}</div>
               <div>Ключ: {entry.assigneeKey}</div>
               <div>Роль: {entry.role}</div>
-              <div>Ставка: {entry.hourlyRate}</div>
+              <div>
+                Ставка:{" "}
+                {formatLocaleNumber(entry.hourlyRate, {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
+              </div>
               <div style={{ display: "flex", gap: "10px" }}>
                 <button
                   type="button"

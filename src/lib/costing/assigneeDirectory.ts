@@ -51,13 +51,19 @@ function buildDirectoryIndex(
   const index = new Map<string, AssigneeDirectoryEntry>();
 
   for (const entry of entries) {
-    const normalizedKey = normalizeIdentityPart(entry.assigneeKey);
-    if (!normalizedKey) {
-      continue;
-    }
+    const normalizedCandidates = [
+      normalizeIdentityPart(entry.assigneeKey),
+      normalizeIdentityPart(entry.assigneeLabel),
+    ];
 
-    if (!index.has(normalizedKey)) {
-      index.set(normalizedKey, entry);
+    for (const normalizedCandidate of normalizedCandidates) {
+      if (!normalizedCandidate) {
+        continue;
+      }
+
+      if (!index.has(normalizedCandidate)) {
+        index.set(normalizedCandidate, entry);
+      }
     }
   }
 
@@ -66,10 +72,10 @@ function buildDirectoryIndex(
 
 function getAssigneeLabel(assignee: SnapshotIssueAssignee | null): string {
   if (!assignee) {
-    return "Unassigned issue";
+    return "Задача без исполнителя";
   }
 
-  return assignee.displayName ?? assignee.login ?? assignee.id ?? "Unknown assignee";
+  return assignee.displayName ?? assignee.login ?? assignee.id ?? "Неизвестный исполнитель";
 }
 
 export function resolveAssigneeDirectoryMatch(

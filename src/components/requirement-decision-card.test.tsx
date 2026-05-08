@@ -110,9 +110,9 @@ describe("RequirementDecisionCard", () => {
     ).map((element) => element.props["data-slot"]);
 
     expect(scenarioSlots).toEqual([
+      "scenario-hours",
       "target-budget",
       "required-approval",
-      "scenario-hours",
       "scenario-margin",
     ]);
     expect((tree as ReactElement<Record<string, unknown>>).props["data-scenario-state"]).toBe(
@@ -121,7 +121,7 @@ describe("RequirementDecisionCard", () => {
     expect(collectText(tree)).toContain("Целевой бюджет");
     expect(collectText(tree)).toContain("Требуется к согласованию");
     expect(collectText(tree)).toContain("Сценарные трудозатраты");
-    expect(collectText(tree)).toContain("Сценарная рентабельность");
+    expect(collectText(tree)).toContain("Прогнозная рентабельность");
   });
 
   it("applies whole-block status styling to the margin block from the 20% threshold helper", () => {
@@ -150,7 +150,35 @@ describe("RequirementDecisionCard", () => {
 
     expect(marginBlock?.props["data-status"]).toBe("risk");
     expect(collectText(marginBlock)).toContain("< 20%");
-    expect(collectText(tree)).toContain("Целевой бюджет");
-    expect(collectText(tree)).toContain("Требуется к согласованию");
+    expect(collectText(marginBlock)).toContain("Целевой бюджет");
+    expect(collectText(marginBlock)).toContain("Требуется к согласованию");
+  });
+
+  it("switches the full margin block to the forecast state when scenario profitability falls below target", () => {
+    const tree = RequirementDecisionCard({
+      totalHours: {
+        current: 180,
+        forecast: 220,
+      },
+      profitability: {
+        current: profitability({
+          marginPercent: 26,
+          neededUpsell: 0,
+        }),
+        forecast: profitability({
+          marginPercent: 12,
+          neededUpsell: 15000,
+        }),
+      },
+      hasScenarioChanges: true,
+    });
+
+    const marginBlock = collectElements(
+      tree,
+      (element) => element.props["data-block"] === "margin",
+    )[0];
+
+    expect(marginBlock?.props["data-status"]).toBe("risk");
+    expect(collectText(marginBlock)).toContain("Прогнозная рентабельность");
   });
 });

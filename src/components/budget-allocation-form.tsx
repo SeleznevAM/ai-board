@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 
+import { formatLocaleNumber, parseLocaleNumber } from "../lib/formatting/number";
 import {
   allocateEvenBudgets,
   applyDirectionBudgetOverrides,
@@ -19,16 +20,24 @@ type BudgetAllocationFormProps = {
 };
 
 function parseBudgetValue(value: string): number | null {
-  if (!value.trim()) {
-    return null;
-  }
-
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed < 0) {
+  const parsed = parseLocaleNumber(value);
+  if (parsed === null || parsed < 0) {
     return null;
   }
 
   return parsed;
+}
+
+function createBudgetInputMap(directionBudgets: DirectionBudgetMap): Record<string, string> {
+  return Object.fromEntries(
+    Object.entries(directionBudgets).map(([direction, budget]) => [
+      direction,
+      formatLocaleNumber(budget, {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
+    ]),
+  );
 }
 
 export function BudgetAllocationForm({
@@ -38,17 +47,29 @@ export function BudgetAllocationForm({
   onChange,
 }: BudgetAllocationFormProps) {
   const [totalBudgetInput, setTotalBudgetInput] = useState(
-    recalculateTotalBudget(scenarioDirectionBudgets).toString(),
+    formatLocaleNumber(recalculateTotalBudget(scenarioDirectionBudgets), {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 2,
+    }),
   );
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [draftBudgets, setDraftBudgets] = useState<DirectionBudgetMap>(scenarioDirectionBudgets);
+  const [draftBudgetInputs, setDraftBudgetInputs] = useState<Record<string, string>>(
+    createBudgetInputMap(scenarioDirectionBudgets),
+  );
 
   useEffect(() => {
-    setTotalBudgetInput(recalculateTotalBudget(scenarioDirectionBudgets).toString());
+    setTotalBudgetInput(
+      formatLocaleNumber(recalculateTotalBudget(scenarioDirectionBudgets), {
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 2,
+      }),
+    );
   }, [scenarioDirectionBudgets]);
 
   useEffect(() => {
     setDraftBudgets(scenarioDirectionBudgets);
+    setDraftBudgetInputs(createBudgetInputMap(scenarioDirectionBudgets));
   }, [scenarioDirectionBudgets]);
 
   function handleTotalBudgetChange(value: string) {
@@ -78,8 +99,17 @@ export function BudgetAllocationForm({
   }
 
   const scenarioTotalBudget = recalculateTotalBudget(scenarioDirectionBudgets);
-  const baselineTotalLabel = baselineTotalBudget === null ? "Не задан" : baselineTotalBudget.toFixed(2);
-  const scenarioTotalLabel = scenarioTotalBudget.toFixed(2);
+  const baselineTotalLabel =
+    baselineTotalBudget === null
+      ? "Не задан"
+      : formatLocaleNumber(baselineTotalBudget, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        });
+  const scenarioTotalLabel = formatLocaleNumber(scenarioTotalBudget, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 
   return (
     <section
@@ -133,10 +163,18 @@ export function BudgetAllocationForm({
             >
               <div style={{ fontSize: "0.8rem", fontWeight: 700 }}>{direction}</div>
               <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
-                Было {baselineDirectionBudgets[direction].toFixed(2)}
+                Было{" "}
+                {formatLocaleNumber(baselineDirectionBudgets[direction], {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
               </div>
               <div style={{ fontSize: "0.9rem", lineHeight: 1.5 }}>
-                Сейчас {scenarioDirectionBudgets[direction].toFixed(2)}
+                Сейчас{" "}
+                {formatLocaleNumber(scenarioDirectionBudgets[direction], {
+                  minimumFractionDigits: 0,
+                  maximumFractionDigits: 2,
+                })}
               </div>
             </div>
           ))}
@@ -187,13 +225,20 @@ export function BudgetAllocationForm({
             <label key={direction} style={{ display: "grid", gap: "6px" }}>
               {direction}
               <input
-                value={String(draftBudgets[direction])}
-                onChange={(event) =>
+                value={draftBudgetInputs[direction] ?? ""}
+                onChange={(event) => {
+                  const nextValue = event.target.value;
+                  setDraftBudgetInputs((current) => ({
+                    ...current,
+                    [direction]: nextValue,
+                  }));
+
+                  const parsed = parseBudgetValue(nextValue);
                   setDraftBudgets((current) => ({
                     ...current,
-                    [direction]: Number(event.target.value) || 0,
-                  }))
-                }
+                    [direction]: parsed ?? 0,
+                  }));
+                }}
                 inputMode="decimal"
                 style={{
                   borderRadius: "12px",

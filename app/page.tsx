@@ -31,6 +31,8 @@ import {
 } from "../src/lib/scenario/state";
 import type { ScenarioState } from "../src/lib/scenario/types";
 
+const WORKSPACE_STORAGE_KEY = "board-ai.requirement-workspace.v1";
+
 const panelStyle = {
   borderRadius: "24px",
   border: "1px solid rgba(75, 49, 11, 0.18)",
@@ -43,6 +45,8 @@ export default function HomePage() {
   const [assigneeDirectory, setAssigneeDirectory] = useState<AssigneeDirectoryEntry[]>([]);
   const [scenarioState, setScenarioState] = useState<ScenarioState | null>(null);
   const [selectedTab, setSelectedTab] = useState<PmDashboardTabId>("overview");
+  const [rootIssueKey, setRootIssueKey] = useState("");
+  const [workspaceHydrated, setWorkspaceHydrated] = useState(false);
   const youTrackBaseUrl = process.env.NEXT_PUBLIC_YOUTRACK_BASE_URL ?? null;
   const successfulScope = result?.kind === "success" ? result.scope : null;
   const blockedScope = result?.kind === "blocked" ? result.scope : null;
@@ -97,8 +101,73 @@ export default function HomePage() {
   ]);
 
   useEffect(() => {
-    setAssigneeDirectory(loadAssigneeDirectory());
+    if (typeof window === "undefined") {
+      return;
+    }
+
+    const syncDirectory = () => {
+      setAssigneeDirectory(loadAssigneeDirectory());
+    };
+
+    window.addEventListener("focus", syncDirectory);
+    window.addEventListener("pageshow", syncDirectory);
+    window.addEventListener("storage", syncDirectory);
+
+    return () => {
+      window.removeEventListener("focus", syncDirectory);
+      window.removeEventListener("pageshow", syncDirectory);
+      window.removeEventListener("storage", syncDirectory);
+    };
   }, []);
+
+  useEffect(() => {
+    setAssigneeDirectory(loadAssigneeDirectory());
+
+    if (typeof window === "undefined") {
+      setWorkspaceHydrated(true);
+      return;
+    }
+
+    const rawWorkspace = window.sessionStorage.getItem(WORKSPACE_STORAGE_KEY);
+    if (!rawWorkspace) {
+      setWorkspaceHydrated(true);
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(rawWorkspace) as {
+        readonly rootIssueKey?: string;
+        readonly result?: RootIssueFormResult | null;
+        readonly scenarioState?: ScenarioState | null;
+        readonly selectedTab?: PmDashboardTabId;
+      };
+
+      setRootIssueKey(parsed.rootIssueKey ?? "");
+      setResult(parsed.result ?? null);
+      setScenarioState(parsed.scenarioState ?? null);
+      setSelectedTab(parsed.selectedTab ?? "overview");
+    } catch {
+      window.sessionStorage.removeItem(WORKSPACE_STORAGE_KEY);
+    } finally {
+      setWorkspaceHydrated(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!workspaceHydrated || typeof window === "undefined") {
+      return;
+    }
+
+    window.sessionStorage.setItem(
+      WORKSPACE_STORAGE_KEY,
+      JSON.stringify({
+        rootIssueKey,
+        result,
+        scenarioState,
+        selectedTab,
+      }),
+    );
+  }, [result, rootIssueKey, scenarioState, selectedTab, workspaceHydrated]);
 
   function createBaselineBudgets(): DirectionBudgetMap {
     return scenarioState?.scenarioBudgets ?? scenarioState?.baselineBudgets ?? allocateEvenBudgets(0);
@@ -293,6 +362,8 @@ export default function HomePage() {
               Обнови снимок требования из YouTrack и подготовь актуальные данные для расчета ниже.
             </p>
             <RootIssueForm
+              rootIssueKey={rootIssueKey}
+              onRootIssueKeyChange={setRootIssueKey}
               onResolved={handleResolved}
               lastSyncedAt={lastSyncedAt}
               onBeforeSubmit={handleBeforeRefresh}

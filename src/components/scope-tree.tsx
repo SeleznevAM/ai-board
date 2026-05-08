@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 
+import { formatLocaleNumber, parseLocaleNumber } from "../lib/formatting/number";
 import type { ScopeTreeNode } from "../lib/scope/types";
 
 type ScenarioIssueCardState = {
@@ -20,7 +21,10 @@ type ScopeTreeProps = {
 };
 
 function formatHours(hours: number): string {
-  return hours.toFixed(2);
+  return formatLocaleNumber(hours, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 function formatMoney(value: number | null): string {
@@ -28,16 +32,15 @@ function formatMoney(value: number | null): string {
     return "Ставка недоступна";
   }
 
-  return value.toLocaleString();
+  return formatLocaleNumber(value, {
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 2,
+  });
 }
 
 function parseExtraHours(value: string): number | null {
-  if (!value.trim()) {
-    return null;
-  }
-
-  const parsed = Number(value);
-  if (!Number.isFinite(parsed) || parsed <= 0) {
+  const parsed = parseLocaleNumber(value);
+  if (parsed === null || !Number.isFinite(parsed) || parsed <= 0) {
     return null;
   }
 
@@ -71,12 +74,24 @@ function TreeBranch({
   const scenarioHours = scenarioExtraHoursByIssueKey[node.issue.key] ?? 0;
   const scenarioState = scenarioIssueStateByIssueKey[node.issue.key];
   const [extraHoursInput, setExtraHoursInput] = useState(
-    scenarioHours > 0 ? String(scenarioHours) : "",
+    scenarioHours > 0
+      ? formatLocaleNumber(scenarioHours, {
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 2,
+        })
+      : "",
   );
   const canEditScenario = Boolean(onApplyScenarioExtraHours && onClearScenarioExtraHours) && !isBlocked;
 
   useEffect(() => {
-    setExtraHoursInput(scenarioHours > 0 ? String(scenarioHours) : "");
+    setExtraHoursInput(
+      scenarioHours > 0
+        ? formatLocaleNumber(scenarioHours, {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2,
+          })
+        : "",
+    );
   }, [scenarioHours]);
 
   return (

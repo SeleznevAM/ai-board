@@ -34,6 +34,8 @@ export type RootIssueFormResult =
     };
 
 type RootIssueFormProps = {
+  readonly rootIssueKey: string;
+  readonly onRootIssueKeyChange: (value: string) => void;
   readonly onResolved: (result: RootIssueFormResult) => void;
   readonly lastSyncedAt?: string;
   readonly onBeforeSubmit?: () => boolean;
@@ -56,11 +58,12 @@ function getErrorCode(status: number) {
 }
 
 export function RootIssueForm({
+  rootIssueKey,
+  onRootIssueKeyChange,
   onResolved,
   lastSyncedAt,
   onBeforeSubmit,
 }: RootIssueFormProps) {
-  const [rootIssueKey, setRootIssueKey] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
@@ -158,7 +161,7 @@ export function RootIssueForm({
           id="root-issue"
           name="rootIssueKey"
           value={rootIssueKey}
-          onChange={(event) => setRootIssueKey(event.target.value)}
+          onChange={(event) => onRootIssueKeyChange(event.target.value)}
           placeholder="REQ-123"
           autoComplete="off"
           style={{

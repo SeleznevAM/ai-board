@@ -1,6 +1,7 @@
 import React, { type ReactNode } from "react";
 
 import { calculateRequiredBudgetForTargetMargin } from "../lib/costing/calculateProfitability";
+import { formatLocaleNumber } from "../lib/formatting/number";
 import type { RequirementProfitability } from "../lib/costing/types";
 import type { ScenarioComparison } from "../lib/scenario/types";
 import {
@@ -15,17 +16,16 @@ type RequirementDecisionCardProps = {
 };
 
 function formatMoney(value: number | null): string {
-  if (value === null) {
-    return "Недоступно";
-  }
-
-  return value.toLocaleString("en-US", {
+  return formatLocaleNumber(value, {
     maximumFractionDigits: 2,
   });
 }
 
 function formatHours(value: number): string {
-  return value.toFixed(2);
+  return formatLocaleNumber(value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
 }
 
 function formatPercent(value: number | null): string {
@@ -33,7 +33,10 @@ function formatPercent(value: number | null): string {
     return "Недоступно";
   }
 
-  return `${value.toFixed(2)}%`;
+  return `${formatLocaleNumber(value, {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })}%`;
 }
 
 function supportingLine({
@@ -41,11 +44,15 @@ function supportingLine({
   value,
   hidden,
   slot,
+  tone = "#6e5430",
+  weight = 700,
 }: {
   readonly label: string;
   readonly value: string;
   readonly hidden: boolean;
   readonly slot: string;
+  readonly tone?: string;
+  readonly weight?: number;
 }): ReactNode {
   if (hidden) {
     return null;
@@ -58,11 +65,11 @@ function supportingLine({
         display: "grid",
         gap: "2px",
         fontSize: "0.95rem",
-        color: "#6e5430",
+        color: tone,
       }}
     >
       <span>{label}</span>
-      <strong style={{ color: "#4b310b" }}>{value}</strong>
+      <strong style={{ color: tone, fontWeight: weight }}>{value}</strong>
     </div>
   );
 }
@@ -87,7 +94,11 @@ export function RequirementDecisionCard({
   const laborChanged = totalHours.current !== totalHours.forecast;
   const marginChanged =
     profitability.current.marginPercent !== profitability.forecast.marginPercent;
-  const marginStatus = getDashboardStatusPresentation(profitability.current.marginPercent);
+  const activeMarginPercent =
+    hasScenarioChanges && marginChanged
+      ? profitability.forecast.marginPercent
+      : profitability.current.marginPercent;
+  const marginStatus = getDashboardStatusPresentation(activeMarginPercent);
   const targetBudget = calculateRequiredBudgetForTargetMargin(profitability.current.cost);
   const needsApproval =
     profitability.current.neededUpsell !== null && profitability.current.neededUpsell > 0;
@@ -150,18 +161,6 @@ export function RequirementDecisionCard({
           <div style={{ display: "grid", gap: "6px", color: "#4b310b" }}>
             <span>Дельта: {formatMoney(profitability.current.delta)}</span>
           </div>
-          {supportingLine({
-            label: "Целевой бюджет",
-            value: formatMoney(targetBudget),
-            hidden: !needsApproval,
-            slot: "target-budget",
-          })}
-          {supportingLine({
-            label: "Требуется к согласованию",
-            value: `+${formatMoney(profitability.current.neededUpsell)}`,
-            hidden: !needsApproval,
-            slot: "required-approval",
-          })}
         </article>
 
         <article data-block="labor" style={blockBaseStyle()}>
@@ -196,7 +195,7 @@ export function RequirementDecisionCard({
           data-status={marginStatus.tone}
           style={{
             ...blockBaseStyle(),
-            ...getDashboardStatusBlockStyle(profitability.current.marginPercent),
+            ...getDashboardStatusBlockStyle(activeMarginPercent),
           }}
         >
           <div style={{ display: "grid", gap: "6px" }}>
@@ -218,10 +217,32 @@ export function RequirementDecisionCard({
             <span>{marginStatus.label}</span>
           </div>
           {supportingLine({
-            label: "Сценарная рентабельность",
+            label: "Целевой бюджет",
+            value: formatMoney(targetBudget),
+            hidden: !needsApproval,
+            slot: "target-budget",
+          })}
+          {supportingLine({
+            label: "Требуется к согласованию",
+            value: `+${formatMoney(profitability.current.neededUpsell)}`,
+            hidden: !needsApproval,
+            slot: "required-approval",
+            tone: "#b42318",
+            weight: 800,
+          })}
+          {supportingLine({
+            label: "Прогнозная рентабельность",
             value: formatPercent(profitability.forecast.marginPercent),
             hidden: !hasScenarioChanges || !marginChanged,
             slot: "scenario-margin",
+            tone:
+              hasScenarioChanges && profitability.forecast.marginPercent !== null && profitability.forecast.marginPercent < 20
+                ? "#b42318"
+                : marginStatus.mutedColor,
+            weight:
+              hasScenarioChanges && profitability.forecast.marginPercent !== null && profitability.forecast.marginPercent < 20
+                ? 800
+                : 700,
           })}
         </article>
       </div>
