@@ -18,6 +18,7 @@ export type SnapshotIssueNode = {
   readonly summary: string;
   readonly parentId: string | null;
   readonly childIds: readonly string[];
+  readonly issueTypeName: string | null;
   readonly statusName: string | null;
   readonly hoursSource: IssueHoursSource;
   readonly normalizedMinutes: number | null;

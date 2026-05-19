@@ -11,6 +11,7 @@ function issueNode(
     childIds: [],
     childCount: 0,
     childrenVisibility: "complete",
+    issueTypeName: null,
     statusName: null,
     estimateMinutes: null,
     spentMinutes: null,
@@ -113,5 +114,23 @@ describe("normalizeIssueHours", () => {
     expect(result.normalizedMinutes).toBeNull();
     expect(result.blocked).toBe(true);
     expect(result.problem?.code).toBe("MISSING_ESTIMATE");
+  });
+
+  it("ignores own time for issues of type Группа задач", () => {
+    const result = normalizeIssueHours(
+      issueNode({
+        id: "6",
+        key: "REQ-6",
+        summary: "Task group",
+        issueTypeName: "Группа задач",
+        statusName: "в работе",
+        estimateMinutes: 180,
+      }),
+    );
+
+    expect(result.hoursSource).toBe("estimate");
+    expect(result.normalizedMinutes).toBe(0);
+    expect(result.blocked).toBe(false);
+    expect(result.problem).toBeNull();
   });
 });

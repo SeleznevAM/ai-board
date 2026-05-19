@@ -8,6 +8,7 @@ const ESTIMATE_STATUSES = new Set([
   "в работе",
   "код ревью",
 ]);
+const IGNORED_ISSUE_TYPES = new Set(["группа задач"]);
 
 function normalizeStatusName(statusName: string | null): string | null {
   return statusName?.trim().toLowerCase() ?? null;
@@ -22,6 +23,9 @@ function buildProblem(code: SnapshotIssueProblem["code"], issueKey: string): Sna
 
 export function normalizeIssueHours(issue: YouTrackIssueNode): SnapshotIssueNode {
   const normalizedStatus = normalizeStatusName(issue.statusName);
+  const normalizedIssueType = normalizeStatusName(issue.issueTypeName);
+  const ignoresOwnTime =
+    normalizedIssueType !== null && IGNORED_ISSUE_TYPES.has(normalizedIssueType);
   const usesSpentTime = normalizedStatus !== null && CLOSED_STATUSES.has(normalizedStatus);
   const usesEstimate =
     normalizedStatus === null ||
@@ -29,14 +33,18 @@ export function normalizeIssueHours(issue: YouTrackIssueNode): SnapshotIssueNode
     !usesSpentTime;
 
   const hoursSource = usesSpentTime ? "spent" : "estimate";
-  const normalizedMinutes = usesSpentTime ? issue.spentMinutes : issue.estimateMinutes;
+  const normalizedMinutes = ignoresOwnTime
+    ? 0
+    : usesSpentTime
+      ? issue.spentMinutes
+      : issue.estimateMinutes;
 
   let problem: SnapshotIssueProblem | null = null;
-  if (usesEstimate && issue.estimateMinutes === null) {
+  if (!ignoresOwnTime && usesEstimate && issue.estimateMinutes === null) {
     problem = buildProblem("MISSING_ESTIMATE", issue.key);
   }
 
-  if (usesSpentTime && issue.spentMinutes === null) {
+  if (!ignoresOwnTime && usesSpentTime && issue.spentMinutes === null) {
     problem = null;
   }
 
@@ -46,6 +54,7 @@ export function normalizeIssueHours(issue: YouTrackIssueNode): SnapshotIssueNode
     summary: issue.summary,
     parentId: issue.parentId,
     childIds: issue.childIds,
+    issueTypeName: issue.issueTypeName,
     statusName: issue.statusName,
     hoursSource,
     normalizedMinutes,

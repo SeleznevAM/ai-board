@@ -19,6 +19,7 @@ function issueNode(
     childIds: [],
     childCount: 0,
     childrenVisibility: "complete",
+    issueTypeName: null,
     statusName: null,
     estimateMinutes: null,
     spentMinutes: null,
@@ -148,5 +149,43 @@ describe("buildRequirementSnapshot", () => {
     expect(result.status).toBe("ready");
     expect(result.totalMinutes).toBe(120);
     expect(result.issues).toHaveLength(2);
+  });
+
+  it("ignores own time of task groups while keeping child work in the total", async () => {
+    const root = treeNode(
+      issueNode({
+        id: "1",
+        key: "REQ-1",
+        summary: "root group",
+        issueTypeName: "Группа задач",
+        statusName: "в работе",
+        estimateMinutes: 240,
+      }),
+      [
+        treeNode(
+          issueNode({
+            id: "2",
+            key: "REQ-2",
+            summary: "child task",
+            statusName: "в работе",
+            estimateMinutes: 60,
+          }),
+          [],
+          1,
+        ),
+      ],
+    );
+
+    const result = await buildRequirementSnapshot(
+      {
+        rootIssueKey: "REQ-1",
+        currentUserAccess,
+      },
+      async () => buildReadyScope(root, 2),
+    );
+
+    expect(result.status).toBe("ready");
+    expect(result.totalMinutes).toBe(60);
+    expect(result.issues.find((issue) => issue.issueKey === "REQ-1")?.normalizedMinutes).toBe(0);
   });
 });

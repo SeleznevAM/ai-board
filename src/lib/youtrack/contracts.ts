@@ -17,6 +17,7 @@ export type YouTrackIssueNode = YouTrackIssueIdentifier & {
   readonly childIds: readonly string[];
   readonly childCount: number;
   readonly childrenVisibility: YouTrackIssueVisibility;
+  readonly issueTypeName: string | null;
   readonly statusName: string | null;
   readonly estimateMinutes: number | null;
   readonly spentMinutes: number | null;

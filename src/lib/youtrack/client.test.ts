@@ -67,3 +67,22 @@ describe("extractAssignee", () => {
     expect(__private__.extractAssignee(null)).toBeNull();
   });
 });
+
+describe("extractIssueTypeName", () => {
+  it("extracts issue type name from the type field", () => {
+    expect(
+      __private__.extractIssueTypeName([
+        {
+          name: "Тип задачи",
+          value: {
+            name: "Группа задач",
+          },
+        },
+      ]),
+    ).toBe("Группа задач");
+  });
+
+  it("returns null when no type field is present", () => {
+    expect(__private__.extractIssueTypeName(null)).toBeNull();
+  });
+});

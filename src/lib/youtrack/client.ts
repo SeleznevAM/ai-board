@@ -36,6 +36,7 @@ type YouTrackSubtaskRef = {
 };
 
 const STATUS_FIELD_NAMES = ["state", "статус"];
+const ISSUE_TYPE_FIELD_NAMES = ["type", "тип", "тип задачи"];
 const ESTIMATE_FIELD_NAMES = ["estimation", "estimate", "оценка"];
 const SPENT_FIELD_NAMES = ["spent time", "затраченное время"];
 const ASSIGNEE_FIELD_NAMES = ["assignee", "исполнитель"];
@@ -112,6 +113,13 @@ function extractStatusName(customFields: YouTrackIssueApiPayload["customFields"]
   return value?.name ?? value?.presentation ?? value?.text ?? null;
 }
 
+function extractIssueTypeName(
+  customFields: YouTrackIssueApiPayload["customFields"],
+): string | null {
+  const value = extractFieldValue(findCustomField(customFields, ISSUE_TYPE_FIELD_NAMES));
+  return value?.name ?? value?.presentation ?? value?.text ?? null;
+}
+
 function extractMinutesValue(
   customFields: YouTrackIssueApiPayload["customFields"],
   fieldNames: readonly string[],
@@ -155,6 +163,7 @@ function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
     childIds,
     childCount: childIds.length,
     childrenVisibility: "complete",
+    issueTypeName: extractIssueTypeName(payload.customFields),
     statusName: extractStatusName(payload.customFields),
     estimateMinutes: extractMinutesValue(payload.customFields, ESTIMATE_FIELD_NAMES),
     spentMinutes: extractMinutesValue(payload.customFields, SPENT_FIELD_NAMES),
@@ -164,6 +173,7 @@ function mapIssuePayload(payload: YouTrackIssueApiPayload): YouTrackIssueNode {
 
 export const __private__ = {
   normalizeSubtasks,
+  extractIssueTypeName,
   extractStatusName,
   extractMinutesValue,
   extractAssignee,
